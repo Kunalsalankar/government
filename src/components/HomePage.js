@@ -136,14 +136,14 @@ const HomePage = () => {
 
     // Show loading state
     setVoiceError(language === 'hindi'
-      ? '📍 आपकी स्थिति खोज रहे हैं...'
-      : '📍 Detecting your location...');
+      ? '📍 आपकी स्थिति खोज रहे हैं... कृपया प्रतीक्षा करें (30 सेकंड)'
+      : '📍 Detecting your location... Please wait (30 seconds)');
 
-    // Options for high accuracy GPS
+    // Options for high accuracy GPS with longer timeout
     const options = {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
+      enableHighAccuracy: true,  // Force GPS, not WiFi/cell tower
+      timeout: 30000,            // 30 seconds (increased from 10)
+      maximumAge: 0              // Don't use cached location
     };
 
     navigator.geolocation.getCurrentPosition(
@@ -155,23 +155,34 @@ const HomePage = () => {
         
         console.log('GPS coordinates:', coordinates);
         console.log('Accuracy:', position.coords.accuracy, 'meters');
+        console.log('Location source:', position.coords.accuracy < 100 ? 'GPS' : position.coords.accuracy < 1000 ? 'Network' : 'IP/WiFi');
         
         const matchedDistrict = findClosestDistrict(coordinates);
         
         if (matchedDistrict) {
           setSelectedDistrict(matchedDistrict);
           
-          const accuracyText = position.coords.accuracy < 100 
-            ? (language === 'hindi' ? 'बहुत सटीक' : 'Very Accurate')
-            : position.coords.accuracy < 1000
-            ? (language === 'hindi' ? 'सटीक' : 'Accurate')
-            : (language === 'hindi' ? 'अनुमानित' : 'Approximate');
+          // Show accuracy with distance info
+          const accuracyMeters = Math.round(position.coords.accuracy);
+          let accuracyText = '';
+          let warningText = '';
+          
+          if (accuracyMeters < 100) {
+            accuracyText = language === 'hindi' ? 'बहुत सटीक GPS' : 'Very Accurate GPS';
+          } else if (accuracyMeters < 1000) {
+            accuracyText = language === 'hindi' ? 'सटीक' : 'Accurate';
+          } else {
+            accuracyText = language === 'hindi' ? 'अनुमानित' : 'Approximate';
+            warningText = language === 'hindi'
+              ? '\n⚠️ यह IP-आधारित हो सकता है। बेहतर परिणामों के लिए GPS चालू करें।'
+              : '\n⚠️ This may be IP-based. Enable GPS for better results.';
+          }
           
           setVoiceError(language === 'hindi'
-            ? `✅ ${matchedDistrict} पहचाना गया (${accuracyText})`
-            : `✅ ${matchedDistrict} detected (${accuracyText})`);
+            ? `✅ ${matchedDistrict} पहचाना गया\n${accuracyText} (~${accuracyMeters}m)${warningText}`
+            : `✅ ${matchedDistrict} detected\n${accuracyText} (~${accuracyMeters}m)${warningText}`);
           
-          setTimeout(() => setVoiceError(''), 5000);
+          setTimeout(() => setVoiceError(''), 8000);
         } else {
           setVoiceError(language === 'hindi'
             ? '⚠️ जिला नहीं मिला। कृपया मैन्युअल रूप से चुनें।'
@@ -196,8 +207,8 @@ const HomePage = () => {
             break;
           case error.TIMEOUT:
             errorMessage = language === 'hindi'
-              ? '⏱️ लोकेशन खोजने में समय लग गया।\n\nकृपया पुनः प्रयास करें या मैन्युअल रूप से चुनें।'
-              : '⏱️ Location detection timed out.\n\nPlease try again or select manually.';
+              ? '⏱️ लोकेशन खोजने में समय लग गया।\n\nसुझाव:\n• बाहर जाएं या खिड़की के पास जाएं\n• GPS चालू करें (सेटिंग्स में)\n• 1 मिनट प्रतीक्षा करें और पुनः प्रयास करें'
+              : '⏱️ Location detection timed out.\n\nTips:\n• Go outdoors or near a window\n• Enable GPS (in phone settings)\n• Wait 1 minute and try again';
             break;
           default:
             errorMessage = language === 'hindi'
