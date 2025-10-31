@@ -2,12 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   Container, Typography, Box, Grid, Paper, Card, CardContent, 
-  Button, Tabs, Tab, CircularProgress, Divider 
+  Button, Tabs, Tab, CircularProgress, Divider
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { districtData } from '../data/mockData';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupsIcon from '@mui/icons-material/Groups';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+  ResponsiveContainer, PieChart, Pie, Cell
+} from 'recharts';
+import mgnregaApi from '../services/mgnregaApi';
 import { useLanguage, translations } from '../context/LanguageContext';
+import DistrictComparison from './DistrictComparison';
+
+// Add this constant array after the imports and before the PerformanceIndicator component
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 // Performance indicator component with color-coded rating
 const PerformanceIndicator = ({ label, value }) => {
@@ -63,19 +74,51 @@ const DistrictDashboard = () => {
   const { language } = useLanguage();
   const text = translations.dashboard[language];
 
+  const [compareDistricts, setCompareDistricts] = useState([]);
+  const [nearbyDistricts, setNearbyDistricts] = useState([]);
+  const [comparativeData, setComparativeData] = useState([]);
+  const [showComparison, setShowComparison] = useState(false);
+
+  // Fetch district data
   useEffect(() => {
-    // Simulate API call with loading state
-    setLoading(true);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Get district data using our API service
+        const data = await mgnregaApi.getDistrictData(stateName, districtName);
+        setDistrictInfo(data);
+        
+        // Get list of districts and pick 3 others randomly
+        const allDistricts = await mgnregaApi.getDistrictList();
+        const otherDistricts = Array.isArray(allDistricts) 
+          ? allDistricts
+              .filter(district => 
+                district && 
+                typeof district === 'string' && 
+                district.trim() !== '' &&
+                district !== districtName
+              )
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 3)
+          : [];
+        
+        setNearbyDistricts(otherDistricts);
+        setCompareDistricts([
+          districtName,
+          ...otherDistricts.slice(0, 2).filter(Boolean)
+        ]);
+      } catch (error) {
+        console.error("Error fetching district data:", error);
+        setNearbyDistricts([]);
+        setCompareDistricts([districtName]);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    // Find district data from our mock data
-    setTimeout(() => {
-      const data = districtData.find(
-        district => district.districtName === districtName && district.stateName === stateName
-      );
-      
-      setDistrictInfo(data);
-      setLoading(false);
-    }, 1000);
+    if (stateName && districtName) {
+      fetchData();
+    }
   }, [stateName, districtName]);
 
   const handleTabChange = (event, newValue) => {
@@ -113,20 +156,40 @@ const DistrictDashboard = () => {
   }
 
   // Prepare data for charts
-  const monthlyPersonDays = districtInfo.historicalData.slice().reverse().map(data => ({
-    name: `${data.month.substring(0, 3)} ${data.year}`,
-    personDays: data.personDaysGenerated,
-  }));
+  const monthlyPersonDays = (districtInfo?.historicalData || [])
+    .slice()
+    .reverse()
+    .map(data => ({
+      name: data?.month ? `${data.month.substring(0, 3)} ${data.year}` : '',
+      personDays: data?.personDaysGenerated || 0,
+    }));
 
-  const participationData = [
-     { name: text.women, value: districtInfo.currentMonthData.womenParticipation },
-     { name: text.sc, value: districtInfo.currentMonthData.scParticipation },
-     { name: text.st, value: districtInfo.currentMonthData.stParticipation },
-     { name: text.others, value: 100 - districtInfo.currentMonthData.womenParticipation - 
-       districtInfo.currentMonthData.scParticipation - districtInfo.currentMonthData.stParticipation }
-   ];
+  const participationData = districtInfo ? [
+    { name: text.women, value: districtInfo.currentMonthData?.womenParticipation || 0 },
+    { name: text.sc, value: districtInfo.currentMonthData?.scParticipation || 0 },
+    { name: text.st, value: districtInfo.currentMonthData?.stParticipation || 0 },
+    { 
+      name: text.others, 
+      value: 100 - 
+        (districtInfo.currentMonthData?.womenParticipation || 0) - 
+        (districtInfo.currentMonthData?.scParticipation || 0) - 
+        (districtInfo.currentMonthData?.stParticipation || 0)
+    }
+  ] : [];
 
-  const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042'];
+  // Function to toggle comparison view
+  const toggleComparison = async () => {
+    if (!showComparison && !comparativeData.length && stateName && compareDistricts.length) {
+      try {
+        const validDistricts = compareDistricts.filter(d => d && typeof d === 'string');
+        const data = await mgnregaApi.getComparativeData(stateName, validDistricts);
+        setComparativeData(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching comparative data:", error);
+      }
+    }
+    setShowComparison(!showComparison);
+  };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -135,19 +198,33 @@ const DistrictDashboard = () => {
           component={Link} 
           to="/" 
           startIcon={<ArrowBackIcon />}
-          sx={{ textTransform: 'none' }}
+          variant="outlined"
+          color="primary"
         >
           {text.backButton}
         </Button>
       </Box>
       
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          {districtName}, {stateName}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          {text.dashboardTitle}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Box>
+            <Typography variant="h4" gutterBottom>
+              {districtName}, {stateName}
+            </Typography>
+            <Typography variant="subtitle1" color="text.secondary">
+              {text.dashboardTitle}
+            </Typography>
+          </Box>
+          
+          <Button 
+            variant="outlined" 
+            color="primary"
+            startIcon={<CompareArrowsIcon />}
+            onClick={toggleComparison}
+          >
+            {showComparison ? text.hideComparison || "Hide Comparison" : text.showComparison || "Compare Districts"}
+          </Button>
+        </Box>
         
         <Divider sx={{ my: 2 }} />
         
@@ -198,7 +275,7 @@ const DistrictDashboard = () => {
                   {text.totalExpenditure}
                 </Typography>
                 <Typography variant="h4" align="center" color="primary">
-                  {(districtInfo.currentMonthData.totalExpenditure / 10000000).toFixed(2)} {text.crore}
+                  {(districtInfo.currentMonthData.totalExpenditure / 100).toFixed(2)} {text.crore}
                 </Typography>
               </CardContent>
             </Card>
@@ -347,6 +424,78 @@ const DistrictDashboard = () => {
             <Typography variant="body2" paragraph>
               <strong>{text.stParticipation}:</strong> {districtInfo.currentMonthData.stParticipation}%
             </Typography>
+          </Grid>
+      </Grid>
+      </Paper>
+      
+      {showComparison && (
+        <Box sx={{ mt: 4 }}>
+          <DistrictComparison 
+            stateName={stateName} 
+            currentDistrict={districtName} 
+            nearbyDistricts={nearbyDistricts} 
+          />
+        </Box>
+      )}
+      
+      <Paper elevation={3} sx={{ p: 3, mt: 4, bgcolor: '#f5f5f5' }}>
+        <Typography variant="h5" gutterBottom color="primary">
+          {text.visualExplainer || "What Do These Numbers Mean?"}
+        </Typography>
+        
+        <Grid container spacing={3} sx={{ mt: 1 }}>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%', bgcolor: '#e3f2fd', border: '2px solid #2196f3' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <BadgeIcon 
+                    sx={{ fontSize: 48, marginRight: 2, color: '#2196f3' }}
+                  />
+                  <Typography variant="h6">
+                    {text.jobCardsExplainer || "Job Cards"}
+                  </Typography>
+                </Box>
+                <Typography variant="body2">
+                  {text.jobCardsDescription || "A job card is your official document that allows you to work under MGNREGA. Each household gets one job card."}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%', bgcolor: '#e8f5e9', border: '2px solid #4caf50' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <GroupsIcon 
+                    sx={{ fontSize: 48, marginRight: 2, color: '#4caf50' }}
+                  />
+                  <Typography variant="h6">
+                    {text.workersExplainer || "Workers"}
+                  </Typography>
+                </Box>
+                <Typography variant="body2">
+                  {text.workersDescription || "These are people who have registered to work under MGNREGA. Multiple workers can be in one household."}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%', bgcolor: '#fff8e1', border: '2px solid #ffc107' }}>
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <AccountBalanceWalletIcon 
+                    sx={{ fontSize: 48, marginRight: 2, color: '#ffc107' }}
+                  />
+                  <Typography variant="h6">
+                    {text.expenditureExplainer || "Money Spent"}
+                  </Typography>
+                </Box>
+                <Typography variant="body2">
+                  {text.expenditureDescription || "This is the total amount of money spent on wages and materials for MGNREGA work in your district."}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       </Paper>

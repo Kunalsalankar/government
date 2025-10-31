@@ -65,7 +65,7 @@ function App() {
             <main className="main-content">
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/districts/:stateName/:districtName" element={<DistrictDashboard />} />
+                <Route path="/district/:stateName/:districtName" element={<DistrictDashboard />} />
               </Routes>
             </main>
             <Footer />

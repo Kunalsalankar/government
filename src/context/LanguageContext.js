@@ -108,7 +108,17 @@ export const translations = {
       scParticipation: 'अनुसूचित जाति भागीदारी',
       stParticipation: 'अनुसूचित जनजाति भागीदारी',
       loading: 'जानकारी लोड हो रही है...',
-      noData: 'जिले की जानकारी नहीं मिली'
+      noData: 'जिले की जानकारी नहीं मिली',
+      visualExplainer: 'ये संख्याएँ क्या बताती हैं?',
+      jobCardsExplainer: 'जॉब कार्ड',
+      jobCardsDescription: 'जॉब कार्ड आपका आधिकारिक दस्तावेज़ है जो आपको MGNREGA के तहत काम करने की अनुमति देता है। प्रत्येक परिवार को एक जॉब कार्ड मिलता है।',
+      workersExplainer: 'श्रमिक',
+      workersDescription: 'ये वे लोग हैं जिन्होंने MGNREGA के तहत काम करने के लिए पंजीकरण किया है। एक परिवार में कई श्रमिक हो सकते हैं।',
+      expenditureExplainer: 'खर्च किया गया पैसा',
+      expenditureDescription: 'यह आपके जिले में MGNREGA काम के लिए मजदूरी और सामग्री पर खर्च की गई कुल राशि है।',
+      showComparison: 'जिलों की तुलना करें',
+      hideComparison: 'तुलना छिपाएं',
+      districtComparison: 'जिला तुलना'
     },
     english: {
       backButton: 'Go Back',
@@ -145,7 +155,17 @@ export const translations = {
       scParticipation: 'SC Participation',
       stParticipation: 'ST Participation',
       loading: 'Loading information...',
-      noData: 'District information not found'
+      noData: 'District information not found',
+      visualExplainer: 'What Do These Numbers Mean?',
+      jobCardsExplainer: 'Job Cards',
+      jobCardsDescription: 'A job card is your official document that allows you to work under MGNREGA. Each household gets one job card.',
+      workersExplainer: 'Workers',
+      workersDescription: 'These are people who have registered to work under MGNREGA. Multiple workers can be in one household.',
+      expenditureExplainer: 'Money Spent',
+      expenditureDescription: 'This is the total amount of money spent on wages and materials for MGNREGA work in your district.',
+      showComparison: 'Compare Districts',
+      hideComparison: 'Hide Comparison',
+      districtComparison: 'District Comparison'
     }
   },
   footer: {

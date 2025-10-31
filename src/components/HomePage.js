@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Card, CardContent, Grid, Button, FormControl, InputLabel, Select, MenuItem, Paper } from '@mui/material';
+import { Container, Typography, Box, Card, CardContent, Grid, Button, Paper, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useNavigate } from 'react-router-dom';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { states } from '../data/mockData';
+import { loadMaharashtraData } from '../data/parseMahaCsv';
 import { useLanguage, translations } from '../context/LanguageContext';
 
 const HomePage = () => {
-  const [selectedState, setSelectedState] = useState('');
+  // Maharashtra is the only state
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [districts, setDistricts] = useState([]);
   const [, setUserLocation] = useState(null); // Unused variable prefixed with underscore
@@ -14,50 +15,87 @@ const HomePage = () => {
   const { language } = useLanguage();
   const text = translations.homePage[language];
 
+  // Load real Maharashtra districts from CSV data
   useEffect(() => {
-    // Reset district when state changes
-    setSelectedDistrict('');
-    
-    // Update districts based on selected state
-    if (selectedState) {
-      const stateData = states.find(state => state.name === selectedState);
-      if (stateData) {
-        setDistricts(stateData.districts);
+    const loadDistricts = async () => {
+      try {
+        const data = await loadMaharashtraData();
+        // Extract unique, cleaned district names (strings only)
+        const districtNames = Array.from(
+          new Set(
+            (Array.isArray(data) ? data : [])
+              .map(item => (typeof item?.districtName === 'string' ? item.districtName.trim() : ''))
+              .filter(name => name && name.length > 0)
+          )
+        ).sort((a, b) => a.localeCompare(b));
+        setDistricts(districtNames);
+      } catch (error) {
+        console.error("Error loading district data:", error);
       }
-    } else {
-      setDistricts([]);
-    }
-  }, [selectedState]);
+    };
+    
+    loadDistricts();
+  }, []);
 
   // Function to detect user's location
   const detectLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          // In a real app, we would use reverse geocoding to find the district
-          // For demo purposes, we'll just select a random district from UP
-          const randomState = states[0].name;
-          const randomDistrict = states[0].districts[Math.floor(Math.random() * states[0].districts.length)];
-          setSelectedState(randomState);
-          setTimeout(() => setSelectedDistrict(randomDistrict), 300);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          alert(text.locationError);
-        }
-      );
-    } else {
+    if (!navigator.geolocation) {
       alert(text.browserError);
+      return;
     }
+
+    import('../services/geolocationService').then(module => {
+      const geolocationService = module.default;
+      setUserLocation({ loading: true });
+      
+      geolocationService.getCurrentPosition()
+        .then(coordinates => {
+          console.log('GPS Coordinates:', coordinates);
+          setUserLocation(coordinates);
+          const location = geolocationService.findNearestDistrict(coordinates);
+          console.log('Nearest district found:', location);
+          
+          if (location.district) {
+            // Find matching district (case-insensitive)
+            const matchedDistrict = districts.find(
+              d => d.toUpperCase() === location.district.toUpperCase()
+            );
+            
+            if (matchedDistrict) {
+              setSelectedDistrict(matchedDistrict);
+              const message = `📍 Location Detected:\n\n` +
+                `District: ${matchedDistrict}, Maharashtra\n\n` +
+                `Your GPS Coordinates:\n` +
+                `Latitude: ${coordinates.lat.toFixed(4)}°\n` +
+                `Longitude: ${coordinates.lng.toFixed(4)}°\n\n` +
+                `Note: If this seems incorrect, your browser may be using approximate location (IP-based). ` +
+                `For accurate detection, enable "Precise Location" in browser settings.`;
+              alert(message);
+            } else {
+              alert(text.locationError);
+            }
+          } else {
+            alert(text.locationError);
+          }
+        })
+        .catch(error => {
+          console.error("Error getting location:", error);
+          if (error.code === 1) {
+            alert("Location access denied. Please enable location permissions in your browser settings.");
+          } else {
+            alert(text.locationError);
+          }
+          setUserLocation(null);
+        });
+    }).catch(error => {
+      console.error("Error importing geolocation service:", error);
+      alert(text.locationError);
+    });
   };
 
   const handleViewData = () => {
-    if (selectedState && selectedDistrict) {
-      navigate(`/districts/${selectedState}/${selectedDistrict}`);
+    if (selectedDistrict) {
+      navigate(`/district/Maharashtra/${selectedDistrict}`);
     }
   };
 
@@ -70,7 +108,6 @@ const HomePage = () => {
         <Typography variant="h5" component="h2" gutterBottom align="center">
           {text.subtitle}
         </Typography>
-        
         <Box sx={{ mt: 4, mb: 2 }}>
           <Typography variant="body1" paragraph align="center">
             {text.description1}
@@ -79,58 +116,55 @@ const HomePage = () => {
             {text.description2}
           </Typography>
         </Box>
-
         <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth>
-              <InputLabel id="state-select-label">{text.stateSelect}</InputLabel>
-              <Select
-                labelId="state-select-label"
-                id="state-select"
-                value={selectedState}
-                label={text.stateSelect}
-                onChange={(e) => setSelectedState(e.target.value)}
-              >
-                {states.map((state) => (
-                  <MenuItem key={state.id} value={state.name}>
-                    {state.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth disabled={!selectedState}>
-              <InputLabel id="district-select-label">{text.districtSelect}</InputLabel>
-              <Select
-                labelId="district-select-label"
-                id="district-select"
-                value={selectedDistrict}
-                label={text.districtSelect}
-                onChange={(e) => setSelectedDistrict(e.target.value)}
-              >
-                {districts.map((district) => (
-                  <MenuItem key={district} value={district}>
-                    {district}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          {/* State dropdown removed, Maharashtra is only state */}
+          <Grid item xs={12} md={8} lg={6}>
+            <Autocomplete
+              options={districts}
+              value={selectedDistrict || null}
+              onChange={(e, val) => setSelectedDistrict(val || '')}
+              onInputChange={(e, val, reason) => {
+                if (reason === 'input') {
+                  const exact = districts.find(d => d.toLowerCase() === (val || '').toLowerCase());
+                  if (exact) setSelectedDistrict(exact);
+                }
+              }}
+              filterSelectedOptions
+              sx={{ 
+                width: { xs: '100%', sm: '100%', md: 480 },
+                '& .MuiInputBase-root': { height: 56, fontSize: '1.05rem' },
+                '& .MuiInputBase-input': { padding: '16px 14px' }
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={text.districtSelect}
+                  placeholder="Type to search districts"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const inputVal = e.currentTarget.value || selectedDistrict;
+                      const match = districts.find(d => d.toLowerCase() === (inputVal || '').toLowerCase());
+                      if (match) {
+                        setSelectedDistrict(match);
+                        handleViewData();
+                      }
+                    }
+                  }}
+                />
+              )}
+            />
           </Grid>
         </Grid>
-        
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
           <Button 
             variant="contained" 
             color="primary" 
             size="large"
             onClick={handleViewData}
-            disabled={!selectedState || !selectedDistrict}
+            disabled={!selectedDistrict}
           >
             {text.viewData}
           </Button>
-          
           <Button 
             variant="outlined" 
             color="secondary" 
@@ -142,7 +176,6 @@ const HomePage = () => {
           </Button>
         </Box>
       </Paper>
-      
       <Grid container spacing={4} sx={{ mt: 2 }}>
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -156,7 +189,6 @@ const HomePage = () => {
             </CardContent>
           </Card>
         </Grid>
-        
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent>
@@ -169,7 +201,6 @@ const HomePage = () => {
             </CardContent>
           </Card>
         </Grid>
-        
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent>
