@@ -13,7 +13,7 @@ const Footer = () => {
           © {currentYear} MGNREGA Information | Our Voice, Our Rights
         </Typography>
         <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
-          {language === 'en' ? 'Data Source:' : 'डेटा स्रोत:'} 
+          {language === 'hindi' ? 'डेटा स्रोत:' : 'Data Source:'} 
           <MuiLink href="https://data.gov.in" target="_blank" rel="noopener" sx={{ ml: 1 }}>
             data.gov.in
           </MuiLink>

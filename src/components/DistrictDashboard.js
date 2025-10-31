@@ -16,6 +16,7 @@ import {
 import mgnregaApi from '../services/mgnregaApi';
 import { useLanguage, translations } from '../context/LanguageContext';
 import DistrictComparison from './DistrictComparison';
+import ShareButton from './ShareButton';
 
 // Add this constant array after the imports and before the PerformanceIndicator component
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -206,7 +207,7 @@ const DistrictDashboard = () => {
       </Box>
       
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
           <Box>
             <Typography variant="h4" gutterBottom>
               {districtName}, {stateName}
@@ -216,14 +217,17 @@ const DistrictDashboard = () => {
             </Typography>
           </Box>
           
-          <Button 
-            variant="outlined" 
-            color="primary"
-            startIcon={<CompareArrowsIcon />}
-            onClick={toggleComparison}
-          >
-            {showComparison ? text.hideComparison || "Hide Comparison" : text.showComparison || "Compare Districts"}
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <ShareButton districtName={districtName} stateName={stateName} />
+            <Button 
+              variant="outlined" 
+              color="primary"
+              startIcon={<CompareArrowsIcon />}
+              onClick={toggleComparison}
+            >
+              {showComparison ? text.hideComparison || "Hide Comparison" : text.showComparison || "Compare Districts"}
+            </Button>
+          </Box>
         </Box>
         
         <Divider sx={{ my: 2 }} />

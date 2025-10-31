@@ -6,6 +6,7 @@ import HomePage from './components/HomePage';
 import DistrictDashboard from './components/DistrictDashboard';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import FloatingTTS from './components/FloatingTTS';
 import { LanguageProvider } from './context/LanguageContext';
 import './App.css';
 
@@ -69,6 +70,7 @@ function App() {
               </Routes>
             </main>
             <Footer />
+            <FloatingTTS />
           </div>
         </Router>
       </ThemeProvider>
