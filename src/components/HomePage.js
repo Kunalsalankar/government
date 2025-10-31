@@ -20,6 +20,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import GavelIcon from '@mui/icons-material/Gavel';
 import WorkIcon from '@mui/icons-material/Work';
 import SchoolIcon from '@mui/icons-material/School';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import MicIcon from '@mui/icons-material/Mic';
 import { loadMaharashtraData } from '../data/parseMahaCsv';
 import { useLanguage, translations } from '../context/LanguageContext';
 
@@ -28,6 +31,8 @@ const HomePage = () => {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [districts, setDistricts] = useState([]);
   const [, setUserLocation] = useState(null); // Unused variable prefixed with underscore
+  const [isListening, setIsListening] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
   const navigate = useNavigate();
   const { language } = useLanguage();
   const text = translations.homePage[language];
@@ -116,8 +121,109 @@ const HomePage = () => {
 
   const handleViewData = () => {
     if (selectedDistrict) {
-      navigate(`/district/Maharashtra/${selectedDistrict}`);
+      localStorage.setItem('selectedDistrict', selectedDistrict);
+      // Navigate to data view
+      // navigate('/data-view');
     }
+  };
+
+  const handleVoiceInput = () => {
+    // Check if browser supports speech recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      setVoiceError(language === 'hindi' 
+        ? 'आपका ब्राउज़र वॉयस इनपुट का समर्थन नहीं करता'
+        : 'Your browser does not support voice input');
+      setTimeout(() => setVoiceError(''), 3000);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = true; // Show interim results
+    recognition.maxAlternatives = 3;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setVoiceError(language === 'hindi' 
+        ? '🎤 बोलें... सुन रहा हूं'
+        : '🎤 Listening... Speak now');
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log('Voice input:', transcript);
+      
+      // Try to match the spoken text with district names
+      const spokenText = transcript.toLowerCase().trim();
+      const matchedDistrict = districts.find(d => 
+        d.toLowerCase().includes(spokenText) || 
+        spokenText.includes(d.toLowerCase())
+      );
+
+      if (matchedDistrict) {
+        setSelectedDistrict(matchedDistrict);
+        setVoiceError(language === 'hindi' 
+          ? `✓ ${matchedDistrict} चुना गया`
+          : `✓ ${matchedDistrict} selected`);
+      } else {
+        setSelectedDistrict(transcript);
+        setVoiceError(language === 'hindi' 
+          ? `आपने कहा: "${transcript}"`
+          : `You said: "${transcript}"`);
+      }
+      
+      setTimeout(() => setVoiceError(''), 3000);
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      
+      // Don't show error for common/expected issues
+      if (event.error === 'no-speech') {
+        console.log('Voice input: No speech detected (user did not speak)');
+        setVoiceError(language === 'hindi' 
+          ? '⚠️ कोई आवाज़ नहीं सुनी गई। कृपया पुनः प्रयास करें।'
+          : '⚠️ No speech heard. Please try again and speak clearly.');
+        setTimeout(() => setVoiceError(''), 4000);
+        return;
+      }
+      
+      if (event.error === 'aborted') {
+        console.log('Voice input: Aborted by user');
+        return;
+      }
+      
+      console.warn('Speech recognition error:', event.error);
+      
+      let errorMsg = '';
+      if (event.error === 'not-allowed') {
+        errorMsg = language === 'hindi' 
+          ? '❌ माइक्रोफ़ोन की अनुमति नहीं। ब्राउज़र सेटिंग्स जांचें।' 
+          : '❌ Microphone permission denied. Check browser settings.';
+      } else if (event.error === 'audio-capture') {
+        errorMsg = language === 'hindi' 
+          ? '❌ माइक्रोफ़ोन नहीं मिला। कृपया माइक कनेक्ट करें।' 
+          : '❌ No microphone found. Please connect a microphone.';
+      } else if (event.error === 'network') {
+        errorMsg = language === 'hindi' ? '❌ नेटवर्क त्रुटि' : '❌ Network error';
+      } else {
+        errorMsg = language === 'hindi' 
+          ? `⚠️ त्रुटि: ${event.error}` 
+          : `⚠️ Error: ${event.error}`;
+      }
+      
+      setVoiceError(errorMsg);
+      setTimeout(() => setVoiceError(''), 5000);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
   };
 
   const theme = useTheme();
@@ -323,7 +429,7 @@ const HomePage = () => {
                     <TextField
                       {...params}
                       label={text.districtSelect}
-                      placeholder={language === 'hindi' ? 'जिले का नाम टाइप करें...' : 'Start typing district name...'}
+                      placeholder={language === 'hindi' ? 'जिले का नाम टाइप करें या बोलें...' : 'Type or speak district name...'}
                       variant="outlined"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
@@ -335,9 +441,102 @@ const HomePage = () => {
                           }
                         }
                       }}
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {params.InputProps.endAdornment}
+                            <Box
+                              component="button"
+                              type="button"
+                              onClick={handleVoiceInput}
+                              disabled={isListening}
+                              sx={{
+                                border: 'none',
+                                background: 'transparent',
+                                cursor: isListening ? 'not-allowed' : 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                p: 1,
+                                mr: -1,
+                                borderRadius: '50%',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  bgcolor: !isListening ? alpha(theme.palette.primary.main, 0.1) : 'transparent'
+                                },
+                                '&:active': {
+                                  transform: !isListening ? 'scale(0.95)' : 'none'
+                                }
+                              }}
+                            >
+                              {isListening ? (
+                                <MicIcon 
+                                  sx={{ 
+                                    color: 'error.main',
+                                    fontSize: 28,
+                                    animation: 'pulse 1.5s ease-in-out infinite',
+                                    '@keyframes pulse': {
+                                      '0%, 100%': { opacity: 1 },
+                                      '50%': { opacity: 0.5 }
+                                    }
+                                  }} 
+                                />
+                              ) : (
+                                <MicIcon 
+                                  sx={{ 
+                                    color: theme.palette.primary.main,
+                                    fontSize: 28,
+                                    '&:hover': {
+                                      color: theme.palette.primary.dark
+                                    }
+                                  }} 
+                                />
+                              )}
+                            </Box>
+                          </>
+                        ),
+                      }}
                     />
                   )}
                 />
+                {voiceError && (
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: voiceError.startsWith('✓') 
+                        ? alpha(theme.palette.success.main, 0.1)
+                        : voiceError.startsWith('🎤')
+                        ? alpha(theme.palette.info.main, 0.1)
+                        : alpha(theme.palette.warning.main, 0.1),
+                      border: `2px solid ${
+                        voiceError.startsWith('✓') 
+                          ? theme.palette.success.main
+                          : voiceError.startsWith('🎤')
+                          ? theme.palette.info.main
+                          : theme.palette.warning.main
+                      }`
+                    }}
+                  >
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        textAlign: 'center',
+                        color: voiceError.startsWith('✓') 
+                          ? 'success.main'
+                          : voiceError.startsWith('🎤')
+                          ? 'info.main'
+                          : 'warning.main',
+                        fontWeight: 600,
+                        fontSize: '1rem'
+                      }}
+                    >
+                      {voiceError}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Box>
@@ -832,6 +1031,102 @@ const HomePage = () => {
                 {language === 'hindi' 
                   ? 'कौशल विकास के अवसर खोजें'
                   : 'Explore skill development opportunities'}
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6} md={5}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 4,
+                borderRadius: 4,
+                background: 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)',
+                color: 'white',
+                textAlign: 'center',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                minHeight: 200,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: '0 8px 20px rgba(76,175,80,0.25)',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 30px rgba(76,175,80,0.35)'
+                }
+              }}
+              onClick={() => navigate('/success-stories')}
+            >
+              <CampaignIcon sx={{ fontSize: { xs: 40, sm: 50 }, mb: 1.5 }} />
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                  fontWeight: 700,
+                  mb: 1
+                }}
+              >
+                {language === 'hindi' ? 'सफलता की कहानियां' : 'Success Stories'}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
+                  opacity: 0.95
+                }}
+              >
+                {language === 'hindi' 
+                  ? 'प्रेरक सफलता की कहानियां पढ़ें'
+                  : 'Read inspiring success stories'}
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6} md={5}>
+            <Paper
+              elevation={4}
+              sx={{
+                p: 4,
+                borderRadius: 4,
+                background: 'linear-gradient(135deg, #FF9800 0%, #FFB74D 100%)',
+                color: 'white',
+                textAlign: 'center',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                minHeight: 200,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                boxShadow: '0 8px 20px rgba(255,152,0,0.25)',
+                '&:hover': {
+                  transform: 'translateY(-8px)',
+                  boxShadow: '0 12px 30px rgba(255,152,0,0.35)'
+                }
+              }}
+              onClick={() => navigate('/complaint-form')}
+            >
+              <FeedbackIcon sx={{ fontSize: { xs: 40, sm: 50 }, mb: 1.5 }} />
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                  fontWeight: 700,
+                  mb: 1
+                }}
+              >
+                {language === 'hindi' ? 'शिकायत दर्ज करें' : 'Submit Complaint'}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: { xs: '0.85rem', sm: '0.95rem' },
+                  opacity: 0.95
+                }}
+              >
+                {language === 'hindi' 
+                  ? 'अपनी शिकायत या प्रतिक्रिया साझा करें'
+                  : 'Share your complaints or feedback'}
               </Typography>
             </Paper>
           </Grid>

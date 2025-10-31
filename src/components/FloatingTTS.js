@@ -52,7 +52,8 @@ const FloatingTTS = () => {
         return text;
       })
       .filter(text => text.length > 0)
-      .join('. ');
+      .join('. ')
+      .substring(0, 3000); // Limit to 3000 characters to avoid browser errors
 
     if (!textContent) {
       alert(language === 'hindi' ? 'पढ़ने के लिए कोई सामग्री नहीं है' : 'No content to read');
@@ -98,10 +99,11 @@ const FloatingTTS = () => {
       setIsSpeaking(false);
     };
     utterance.onerror = (e) => {
-      console.error('Speech error:', e);
-      alert(language === 'hindi' 
-        ? 'आवाज़ चलाने में समस्या है। कृपया पुनः प्रयास करें।' 
-        : 'Error playing audio. Please try again.');
+      console.warn('Speech synthesis error:', e.error);
+      // Only show alert for critical errors, not for common issues like 'canceled'
+      if (e.error !== 'canceled' && e.error !== 'interrupted') {
+        console.error('TTS Error details:', e);
+      }
       setIsSpeaking(false);
     };
 

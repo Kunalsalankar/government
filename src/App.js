@@ -14,6 +14,10 @@ import AdminAddJob from './components/AdminAddJob';
 import AdminAddTraining from './components/AdminAddTraining';
 import AdminManageJobs from './components/AdminManageJobs';
 import AdminManageTraining from './components/AdminManageTraining';
+import AdminSuccessStories from './components/AdminSuccessStories';
+import AdminComplaints from './components/AdminComplaints';
+import SuccessStories from './components/SuccessStories';
+import ComplaintForm from './components/ComplaintForm';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FloatingTTS from './components/FloatingTTS';
@@ -98,6 +102,10 @@ function App() {
                 <Route path="/admin-add-training" element={<AdminAddTraining />} />
                 <Route path="/admin-manage-jobs" element={<AdminManageJobs />} />
                 <Route path="/admin-manage-training" element={<AdminManageTraining />} />
+                <Route path="/admin-success-stories" element={<AdminSuccessStories />} />
+                <Route path="/admin-complaints" element={<AdminComplaints />} />
+                <Route path="/success-stories" element={<SuccessStories />} />
+                <Route path="/complaint-form" element={<ComplaintForm />} />
               </Routes>
             </main>
             <Footer />

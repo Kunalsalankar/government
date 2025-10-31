@@ -75,7 +75,9 @@ const AdminDashboard = () => {
       addJob: 'Add Job',
       addTraining: 'Add Training',
       manageJobs: 'Manage Jobs',
-      manageTraining: 'Manage Training'
+      manageTraining: 'Manage Training',
+      manageStories: 'Manage Stories',
+      manageComplaints: 'Manage Complaints'
     },
     hindi: {
       title: 'प्रशासक डैशबोर्ड',
@@ -106,7 +108,9 @@ const AdminDashboard = () => {
       addJob: 'नौकरी जोड़ें',
       addTraining: 'प्रशिक्षण जोड़ें',
       manageJobs: 'नौकरियाँ प्रबंधित करें',
-      manageTraining: 'प्रशिक्षण प्रबंधित करें'
+      manageTraining: 'प्रशिक्षण प्रबंधित करें',
+      manageStories: 'कहानियाँ प्रबंधित करें',
+      manageComplaints: 'शिकायतें प्रबंधित करें'
     }
   };
 
@@ -299,7 +303,7 @@ const AdminDashboard = () => {
           {/* Action Buttons */}
           <Box sx={{ mb: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6} md={2}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -341,7 +345,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid item xs={12} sm={6} md={2}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -380,6 +384,48 @@ const AdminDashboard = () => {
                   }}
                 >
                   {t.manageTraining}
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} sm={6} md={2}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  startIcon={<ManageSearchIcon />}
+                  onClick={() => navigate('/admin-success-stories')}
+                  sx={{
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    background: `linear-gradient(45deg, ${theme.palette.success.light}, ${theme.palette.success.main})`,
+                    '&:hover': {
+                      background: `linear-gradient(45deg, ${theme.palette.success.main}, ${theme.palette.success.main})`
+                    }
+                  }}
+                >
+                  {t.manageStories}
+                </Button>
+              </Grid>
+              
+              <Grid item xs={12} sm={6} md={2}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  startIcon={<ManageSearchIcon />}
+                  onClick={() => navigate('/admin-complaints')}
+                  sx={{
+                    py: 1.5,
+                    borderRadius: 2,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    background: `linear-gradient(45deg, ${theme.palette.warning.light}, ${theme.palette.warning.main})`,
+                    '&:hover': {
+                      background: `linear-gradient(45deg, ${theme.palette.warning.main}, ${theme.palette.warning.main})`
+                    }
+                  }}
+                >
+                  {t.manageComplaints}
                 </Button>
               </Grid>
             </Grid>
