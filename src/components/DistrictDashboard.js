@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
-  Container, Typography, Box, Grid, Paper, Card, CardContent, 
+  Container, Typography, Box, Paper, Card, CardContent, Grid,
   Button, Tabs, Tab, CircularProgress, Divider
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -166,15 +166,15 @@ const DistrictDashboard = () => {
     }));
 
   const participationData = districtInfo ? [
-    { name: text.women, value: districtInfo.currentMonthData?.womenParticipation || 0 },
-    { name: text.sc, value: districtInfo.currentMonthData?.scParticipation || 0 },
-    { name: text.st, value: districtInfo.currentMonthData?.stParticipation || 0 },
+    { name: text.women, value: parseFloat((districtInfo.currentMonthData?.womenParticipation || 0) / 100000) },
+    { name: text.sc, value: parseFloat((districtInfo.currentMonthData?.scParticipation || 0) / 100000) },
+    { name: text.st, value: parseFloat((districtInfo.currentMonthData?.stParticipation || 0) / 100000) },
     { 
       name: text.others, 
-      value: 100 - 
-        (districtInfo.currentMonthData?.womenParticipation || 0) - 
-        (districtInfo.currentMonthData?.scParticipation || 0) - 
-        (districtInfo.currentMonthData?.stParticipation || 0)
+      value: parseFloat(100 - 
+        ((districtInfo.currentMonthData?.womenParticipation || 0) / 100000) - 
+        ((districtInfo.currentMonthData?.scParticipation || 0) / 100000) - 
+        ((districtInfo.currentMonthData?.stParticipation || 0) / 100000))
     }
   ] : [];
 
@@ -193,92 +193,159 @@ const DistrictDashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 2 }}>
+    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 4 }, mb: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: { xs: 1.5, sm: 2 } }}>
         <Button 
           component={Link} 
           to="/" 
           startIcon={<ArrowBackIcon />}
           variant="outlined"
           color="primary"
+          size="small"
+          sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
         >
           {text.backButton}
         </Button>
       </Box>
       
-      <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
-          <Box>
-            <Typography variant="h4" gutterBottom>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 4 } }}>
+        {/* Header with district name and action buttons */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'flex-start',
+          mb: 1.5
+        }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' },
+                fontWeight: 600,
+                mb: 0.5
+              }}
+            >
               {districtName}, {stateName}
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
+            <Typography 
+              variant="subtitle1" 
+              color="text.secondary"
+              sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+            >
               {text.dashboardTitle}
             </Typography>
           </Box>
           
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          {/* Action buttons - compact on mobile */}
+          <Box sx={{ display: 'flex', gap: 1, ml: 1 }}>
             <ShareButton districtName={districtName} stateName={stateName} />
             <Button 
               variant="outlined" 
               color="primary"
-              startIcon={<CompareArrowsIcon />}
               onClick={toggleComparison}
+              size="small"
+              sx={{ 
+                minWidth: { xs: 'auto', sm: 'auto' },
+                px: { xs: 1, sm: 2 }
+              }}
             >
-              {showComparison ? text.hideComparison || "Hide Comparison" : text.showComparison || "Compare Districts"}
+              <CompareArrowsIcon fontSize="small" />
+              <Box component="span" sx={{ ml: { xs: 0, sm: 1 }, display: { xs: 'none', sm: 'inline' } }}>
+                {showComparison ? (text.hideComparison || "Hide") : (text.showComparison || "Compare")}
+              </Box>
             </Button>
           </Box>
         </Box>
         
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: 1.5 }} />
         
-        <Grid container spacing={3} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6} md={3}>
+        <Grid container spacing={{ xs: 1.5, sm: 3 }} sx={{ mt: 0 }}>
+          <Grid item xs={6} sm={6} md={3}>
             <Card sx={{ height: '100%', bgcolor: '#e3f2fd' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }, mb: { xs: 0.5, sm: 1 } }}
+                >
                   {text.jobCardsIssued}
                 </Typography>
-                <Typography variant="h4" align="center" color="primary">
+                <Typography 
+                  variant="h4" 
+                  align="center" 
+                  color="primary"
+                  sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' }, fontWeight: 600 }}
+                >
                   {districtInfo.currentMonthData.jobCardsIssued.toLocaleString()}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <Card sx={{ height: '100%', bgcolor: '#e8f5e9' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }, mb: { xs: 0.5, sm: 1 } }}
+                >
                   {text.workersRegistered}
                 </Typography>
-                <Typography variant="h4" align="center" color="primary">
+                <Typography 
+                  variant="h4" 
+                  align="center" 
+                  color="primary"
+                  sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' }, fontWeight: 600 }}
+                >
                   {districtInfo.currentMonthData.workersRegistered.toLocaleString()}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <Card sx={{ height: '100%', bgcolor: '#fff8e1' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }, mb: { xs: 0.5, sm: 1 } }}
+                >
                   {text.householdsEmployed}
                 </Typography>
-                <Typography variant="h4" align="center" color="primary">
+                <Typography 
+                  variant="h4" 
+                  align="center" 
+                  color="primary"
+                  sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' }, fontWeight: 600 }}
+                >
                   {districtInfo.currentMonthData.householdsEmployed.toLocaleString()}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={6} sm={6} md={3}>
             <Card sx={{ height: '100%', bgcolor: '#ffebee' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom align="center">
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography 
+                  variant="h6" 
+                  gutterBottom 
+                  align="center"
+                  sx={{ fontSize: { xs: '0.875rem', sm: '1.25rem' }, mb: { xs: 0.5, sm: 1 } }}
+                >
                   {text.totalExpenditure}
                 </Typography>
-                <Typography variant="h4" align="center" color="primary">
+                <Typography 
+                  variant="h4" 
+                  align="center" 
+                  color="primary"
+                  sx={{ fontSize: { xs: '1.5rem', sm: '2.125rem' }, fontWeight: 600 }}
+                >
                   {(districtInfo.currentMonthData.totalExpenditure / 100).toFixed(2)} {text.crore}
                 </Typography>
               </CardContent>
@@ -287,14 +354,26 @@ const DistrictDashboard = () => {
         </Grid>
       </Paper>
       
-      <Box sx={{ mb: 4 }}>
-        <Tabs value={tabValue} onChange={handleTabChange} centered>
+      <Box sx={{ mb: { xs: 2, sm: 4 } }}>
+        <Tabs 
+          value={tabValue} 
+          onChange={handleTabChange} 
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            '& .MuiTab-root': {
+              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              minWidth: { xs: 100, sm: 120 },
+              px: { xs: 1, sm: 2 }
+            }
+          }}
+        >
           <Tab label={text.performanceTab} />
           <Tab label={text.monthlyDataTab} />
           <Tab label={text.participationTab} />
         </Tabs>
         
-        <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 1, mt: 2 }}>
+        <Box sx={{ p: { xs: 2, sm: 3 }, bgcolor: 'background.paper', borderRadius: 1, mt: 2 }}>
           {tabValue === 0 && (
             <Grid container spacing={3} justifyContent="center">
               <Grid item xs={12} md={8}>
@@ -348,7 +427,13 @@ const DistrictDashboard = () => {
               <Typography variant="h6" gutterBottom align="center">
                 {text.personDaysTitle}
               </Typography>
-              <Box sx={{ height: 400, mt: 3 }}>
+              <Box sx={{ 
+                height: { xs: 300, sm: 350, md: 400 }, 
+                minHeight: 300, 
+                mt: 3, 
+                width: '100%',
+                position: 'relative'
+              }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={monthlyPersonDays}
@@ -374,7 +459,13 @@ const DistrictDashboard = () => {
               <Typography variant="h6" gutterBottom align="center">
                 {text.participationTitle}
               </Typography>
-              <Box sx={{ height: 400, mt: 3 }}>
+              <Box sx={{ 
+                height: { xs: 350, sm: 400, md: 450 }, 
+                minHeight: 350, 
+                mt: 3, 
+                width: '100%',
+                position: 'relative'
+              }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -383,7 +474,8 @@ const DistrictDashboard = () => {
                       cy="50%"
                       labelLine={true}
                       label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={150}
+                      outerRadius="70%"
+                      innerRadius="0%"
                       fill="#8884d8"
                       dataKey="value"
                     >
@@ -400,34 +492,94 @@ const DistrictDashboard = () => {
         </Box>
       </Box>
       
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mt: { xs: 2, sm: 3 } }}>
+        <Typography 
+          variant="h6" 
+          gutterBottom
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, mb: { xs: 1.5, sm: 2.5 } }}
+        >
           {text.additionalInfo}
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="body2" paragraph>
-              <strong>{text.wageRate}:</strong> ₹{districtInfo.currentMonthData.averageWageRate} {text.perDay}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>{text.completedWorks}:</strong> {districtInfo.currentMonthData.completedWorks}
-            </Typography>
+        <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.wageRate}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  ₹{parseFloat(districtInfo.currentMonthData.averageWageRate).toFixed(2)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {text.perDay}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="body2" paragraph>
-              <strong>{text.ongoingWorks}:</strong> {districtInfo.currentMonthData.ongoingWorks}
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>{text.womenParticipation}:</strong> {districtInfo.currentMonthData.womenParticipation}%
-            </Typography>
+          
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.completedWorks}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  {districtInfo.currentMonthData.completedWorks.toLocaleString()}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="body2" paragraph>
-              <strong>{text.scParticipation}:</strong> {districtInfo.currentMonthData.scParticipation}%
-            </Typography>
-            <Typography variant="body2" paragraph>
-              <strong>{text.stParticipation}:</strong> {districtInfo.currentMonthData.stParticipation}%
-            </Typography>
+          
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.ongoingWorks}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  {districtInfo.currentMonthData.ongoingWorks.toLocaleString()}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.womenParticipation}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  {(parseFloat(districtInfo.currentMonthData.womenParticipation) / 100000).toFixed(2)}%
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.scParticipation}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  {(parseFloat(districtInfo.currentMonthData.scParticipation) / 100000).toFixed(2)}%
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={6} sm={4} md={4}>
+            <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
+              <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                  {text.stParticipation}
+                </Typography>
+                <Typography variant="h6" fontWeight={600} color="primary">
+                  {(parseFloat(districtInfo.currentMonthData.stParticipation) / 100000).toFixed(2)}%
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
       </Grid>
       </Paper>
@@ -442,24 +594,29 @@ const DistrictDashboard = () => {
         </Box>
       )}
       
-      <Paper elevation={3} sx={{ p: 3, mt: 4, bgcolor: '#f5f5f5' }}>
-        <Typography variant="h5" gutterBottom color="primary">
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mt: { xs: 2, sm: 4 }, bgcolor: '#f5f5f5' }}>
+        <Typography 
+          variant="h5" 
+          gutterBottom 
+          color="primary"
+          sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
+        >
           {text.visualExplainer || "What Do These Numbers Mean?"}
         </Typography>
         
-        <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: { xs: 0.5, sm: 1 } }}>
           <Grid item xs={12} md={4}>
             <Card sx={{ height: '100%', bgcolor: '#e3f2fd', border: '2px solid #2196f3' }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
                   <BadgeIcon 
-                    sx={{ fontSize: 48, marginRight: 2, color: '#2196f3' }}
+                    sx={{ fontSize: { xs: 36, sm: 48 }, marginRight: { xs: 1.5, sm: 2 }, color: '#2196f3' }}
                   />
-                  <Typography variant="h6">
+                  <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                     {text.jobCardsExplainer || "Job Cards"}
                   </Typography>
                 </Box>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
                   {text.jobCardsDescription || "A job card is your official document that allows you to work under MGNREGA. Each household gets one job card."}
                 </Typography>
               </CardContent>
@@ -468,16 +625,16 @@ const DistrictDashboard = () => {
           
           <Grid item xs={12} md={4}>
             <Card sx={{ height: '100%', bgcolor: '#e8f5e9', border: '2px solid #4caf50' }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
                   <GroupsIcon 
-                    sx={{ fontSize: 48, marginRight: 2, color: '#4caf50' }}
+                    sx={{ fontSize: { xs: 36, sm: 48 }, marginRight: { xs: 1.5, sm: 2 }, color: '#4caf50' }}
                   />
-                  <Typography variant="h6">
+                  <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                     {text.workersExplainer || "Workers"}
                   </Typography>
                 </Box>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
                   {text.workersDescription || "These are people who have registered to work under MGNREGA. Multiple workers can be in one household."}
                 </Typography>
               </CardContent>
@@ -486,16 +643,16 @@ const DistrictDashboard = () => {
           
           <Grid item xs={12} md={4}>
             <Card sx={{ height: '100%', bgcolor: '#fff8e1', border: '2px solid #ffc107' }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
                   <AccountBalanceWalletIcon 
-                    sx={{ fontSize: 48, marginRight: 2, color: '#ffc107' }}
+                    sx={{ fontSize: { xs: 36, sm: 48 }, marginRight: { xs: 1.5, sm: 2 }, color: '#ffc107' }}
                   />
-                  <Typography variant="h6">
+                  <Typography variant="h6" sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                     {text.expenditureExplainer || "Money Spent"}
                   </Typography>
                 </Box>
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
                   {text.expenditureDescription || "This is the total amount of money spent on wages and materials for MGNREGA work in your district."}
                 </Typography>
               </CardContent>

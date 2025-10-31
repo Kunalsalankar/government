@@ -56,7 +56,7 @@ const DistrictComparison = ({ stateName, currentDistrict, nearbyDistricts = [] }
         return value ? `${(value / 100).toFixed(2)} Cr` : 'N/A';
       }
       if (field === 'womenParticipation') {
-        return value ? `${value}%` : 'N/A';
+        return value ? `${(parseFloat(value) / 100000).toFixed(2)}%` : 'N/A';
       }
       return value?.toLocaleString() || 'N/A';
     } catch (err) {
@@ -65,18 +65,28 @@ const DistrictComparison = ({ stateName, currentDistrict, nearbyDistricts = [] }
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom color="primary">
+    <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 } }}>
+      <Typography 
+        variant="h6" 
+        gutterBottom 
+        color="primary"
+        sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+      >
         {text.districtComparison || "District Comparison"}
       </Typography>
       
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 500 }}>
           <TableHead>
-            <TableRow>
-              <TableCell><strong>{language === 'hindi' ? 'मीट्रिक' : 'Metric'}</strong></TableCell>
+            <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+              <TableCell sx={{ fontWeight: 600, fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
+                {language === 'hindi' ? 'मीट्रिक' : 'Metric'}
+              </TableCell>
               {comparisonData.map(district => (
-                <TableCell key={district?.districtName || 'unknown'}>
+                <TableCell 
+                  key={district?.districtName || 'unknown'}
+                  sx={{ fontWeight: 600, fontSize: { xs: '0.85rem', sm: '0.875rem' } }}
+                >
                   {district?.districtName || 'Unknown District'}
                 </TableCell>
               ))}
@@ -84,25 +94,31 @@ const DistrictComparison = ({ stateName, currentDistrict, nearbyDistricts = [] }
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>{text.householdsEmployed || 'Households Employed'}</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
+                {text.householdsEmployed || 'Households Employed'}
+              </TableCell>
               {comparisonData.map(district => (
-                <TableCell key={district?.districtName || 'unknown'}>
+                <TableCell key={district?.districtName || 'unknown'} sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                   {renderCell(district, 'householdsEmployed')}
                 </TableCell>
               ))}
             </TableRow>
             <TableRow>
-              <TableCell>{text.totalExpenditure || 'Total Expenditure (₹)'}</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
+                {text.totalExpenditure || 'Total Expenditure (₹)'}
+              </TableCell>
               {comparisonData.map(district => (
-                <TableCell key={district?.districtName || 'unknown'}>
+                <TableCell key={district?.districtName || 'unknown'} sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                   {renderCell(district, 'totalExpenditure')}
                 </TableCell>
               ))}
             </TableRow>
             <TableRow>
-              <TableCell>{text.womenParticipation || 'Women Participation (%)'}</TableCell>
+              <TableCell sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
+                {text.womenParticipation || 'Women Participation'}
+              </TableCell>
               {comparisonData.map(district => (
-                <TableCell key={district?.districtName || 'unknown'}>
+                <TableCell key={district?.districtName || 'unknown'} sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                   {renderCell(district, 'womenParticipation')}
                 </TableCell>
               ))}

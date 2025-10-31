@@ -13,42 +13,87 @@ const Header = () => {
   return (
     <>
       <AppBar position="static">
-        <Toolbar>
-          <Button 
-            component={Link} 
-            to="/" 
-            color="inherit" 
-            startIcon={<HomeIcon />}
+        <Toolbar sx={{ 
+          flexDirection: { xs: 'column', sm: 'row' },
+          py: { xs: 1, sm: 0.5 },
+          gap: { xs: 1, sm: 0 }
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            width: { xs: '100%', sm: 'auto' },
+            justifyContent: { xs: 'space-between', sm: 'flex-start' }
+          }}>
+            <Button 
+              component={Link} 
+              to="/" 
+              color="inherit" 
+              startIcon={<HomeIcon />}
+              sx={{ 
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                minWidth: 'auto',
+                px: { xs: 1, sm: 2 }
+              }}
+            >
+              MGNREGA
+            </Button>
+            
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                display: { xs: 'block', sm: 'none' },
+                fontSize: '0.7rem'
+              }}
+            >
+              Our Voice, Our Rights
+            </Typography>
+          </Box>
+          
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }} />
+          
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              mr: 2,
+              display: { xs: 'none', sm: 'block' }
+            }}
           >
-            MGNREGA Information
-          </Button>
-          
-          <Box sx={{ flexGrow: 1 }} />
-          
-          <Typography variant="body1" sx={{ mr: 2 }}>
             Our Voice, Our Rights
           </Typography>
           
-          <Tooltip title={language === 'hindi' ? 'सहायता' : 'Help'}>
-            <IconButton 
-              color="inherit" 
-              onClick={() => setHelpOpen(true)}
-              sx={{ mr: 1 }}
-            >
-              <HelpOutlineIcon />
-            </IconButton>
-          </Tooltip>
-          
-          <FormControlLabel
-            control={
-              <Switch 
-                checked={language === 'hindi'} 
-                onChange={toggleLanguage} 
-                color="default" 
-              />
-            }
-            label={language === 'hindi' ? 'हिंदी' : 'English'}
-          />
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <Tooltip title={language === 'hindi' ? 'सहायता' : 'Help'}>
+              <IconButton 
+                color="inherit" 
+                onClick={() => setHelpOpen(true)}
+                size="small"
+              >
+                <HelpOutlineIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            
+            <FormControlLabel
+              control={
+                <Switch 
+                  checked={language === 'hindi'} 
+                  onChange={toggleLanguage} 
+                  color="default"
+                  size="small"
+                />
+              }
+              label={language === 'hindi' ? 'हिंदी' : 'English'}
+              sx={{ 
+                m: 0,
+                '& .MuiFormControlLabel-label': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                }
+              }}
+            />
+          </Box>
         </Toolbar>
       </AppBar>
       

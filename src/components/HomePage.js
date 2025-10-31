@@ -100,25 +100,49 @@ const HomePage = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 4, borderRadius: 2, mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center" color="primary.main">
+    <Container maxWidth="lg" sx={{ mt: { xs: 2, sm: 4 }, mb: { xs: 2, sm: 4 }, px: { xs: 2, sm: 3 } }}>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3, md: 4 }, borderRadius: 2, mb: { xs: 2, sm: 4 } }}>
+        <Typography 
+          variant="h4" 
+          component="h1" 
+          gutterBottom 
+          align="center" 
+          color="primary.main"
+          sx={{ fontSize: { xs: '1.5rem', sm: '2rem', md: '2.125rem' } }}
+        >
           {text.mainTitle}
         </Typography>
-        <Typography variant="h5" component="h2" gutterBottom align="center">
+        <Typography 
+          variant="h5" 
+          component="h2" 
+          gutterBottom 
+          align="center"
+          sx={{ fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.5rem' } }}
+        >
           {text.subtitle}
         </Typography>
-        <Box sx={{ mt: 4, mb: 2 }}>
-          <Typography variant="body1" paragraph align="center">
+        <Box sx={{ mt: { xs: 2, sm: 4 }, mb: 2 }}>
+          <Typography 
+            variant="body1" 
+            paragraph 
+            align="center"
+            sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+          >
             {text.description1}
           </Typography>
-          <Typography variant="body1" paragraph align="center">
+          <Typography 
+            variant="body1" 
+            paragraph 
+            align="center"
+            sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}
+          >
             {text.description2}
           </Typography>
         </Box>
-        <Grid container spacing={3} justifyContent="center" sx={{ mt: 2 }}>
-          {/* State dropdown removed, Maharashtra is only state */}
-          <Grid item xs={12} md={8} lg={6}>
+        
+        {/* District Selection */}
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+          <Box sx={{ width: { xs: '100%', sm: '90%', md: '70%', lg: '60%' }, maxWidth: 600 }}>
             <Autocomplete
               options={districts}
               value={selectedDistrict || null}
@@ -130,16 +154,28 @@ const HomePage = () => {
                 }
               }}
               filterSelectedOptions
+              ListboxProps={{
+                style: {
+                  maxHeight: '240px',
+                  fontSize: '1rem'
+                }
+              }}
               sx={{ 
-                width: { xs: '100%', sm: '100%', md: 480 },
-                '& .MuiInputBase-root': { height: 56, fontSize: '1.05rem' },
-                '& .MuiInputBase-input': { padding: '16px 14px' }
+                width: '100%',
+                '& .MuiInputBase-root': { 
+                  minHeight: 56,
+                  fontSize: '1rem'
+                },
+                '& .MuiInputLabel-root': {
+                  fontSize: '1rem'
+                }
               }}
               renderInput={(params) => (
                 <TextField
                   {...params}
                   label={text.districtSelect}
-                  placeholder="Type to search districts"
+                  placeholder="Start typing district name..."
+                  variant="outlined"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const inputVal = e.currentTarget.value || selectedDistrict;
@@ -153,37 +189,90 @@ const HomePage = () => {
                 />
               )}
             />
-          </Grid>
-        </Grid>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, gap: 2 }}>
+          </Box>
+        </Box>
+
+        {/* Action Buttons */}
+        <Box sx={{ 
+          mt: 3, 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 2,
+          px: { xs: 0, sm: 2 }
+        }}>
           <Button 
             variant="contained" 
-            color="primary" 
-            size="large"
             onClick={handleViewData}
             disabled={!selectedDistrict}
-          >
-            {text.viewData}
-          </Button>
-          <Button 
-            variant="outlined" 
-            color="secondary" 
             size="large"
-            startIcon={<LocationOnIcon />}
-            onClick={detectLocation}
+            sx={{ 
+              minWidth: { xs: '100%', sm: 240 },
+              py: 1.5,
+              fontSize: '1rem !important',
+              fontWeight: '600 !important',
+              textTransform: 'none',
+              color: '#ffffff !important',
+              backgroundColor: '#1976d2 !important',
+              '&:hover': {
+                backgroundColor: '#1565c0 !important'
+              },
+              '&.Mui-disabled': {
+                backgroundColor: '#e0e0e0 !important',
+                color: '#9e9e9e !important'
+              },
+              '& .MuiButton-label': {
+                color: '#ffffff !important'
+              }
+            }}
           >
-            {text.detectLocation}
+            <span style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 600 }}>
+              {text.viewData || 'View Information'}
+            </span>
           </Button>
+          
+          <Grid size={{ xs: 12, sm: 6, md: 5 }}>
+            <Button 
+              variant="outlined" 
+              color="secondary" 
+              startIcon={<LocationOnIcon />}
+              size="large"
+              onClick={detectLocation}
+              sx={{ 
+                minWidth: { xs: '100%', sm: 240 },
+                py: 1.5,
+                fontSize: '1rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              {text.detectLocation}
+            </Button>
+          </Grid>
         </Box>
       </Paper>
-      <Grid container spacing={4} sx={{ mt: 2 }}>
+      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={{ mt: { xs: 1, sm: 2 } }}>
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent>
-              <Typography variant="h6" component="h3" gutterBottom color="primary">
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                gutterBottom 
+                color="primary"
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 {text.whatIsMgnrega}
               </Typography>
-              <Typography variant="body2">
+              <Typography 
+                variant="body2"
+                sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
+              >
                 {text.whatIsMgnregaDesc}
               </Typography>
             </CardContent>
@@ -191,11 +280,20 @@ const HomePage = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent>
-              <Typography variant="h6" component="h3" gutterBottom color="primary">
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                gutterBottom 
+                color="primary"
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 {text.benefitsAndRights}
               </Typography>
-              <Typography variant="body2">
+              <Typography 
+                variant="body2"
+                sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
+              >
                 {text.benefitsAndRightsDesc}
               </Typography>
             </CardContent>
@@ -203,11 +301,20 @@ const HomePage = () => {
         </Grid>
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent>
-              <Typography variant="h6" component="h3" gutterBottom color="primary">
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Typography 
+                variant="h6" 
+                component="h3" 
+                gutterBottom 
+                color="primary"
+                sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
+              >
                 {text.districtPerformance}
               </Typography>
-              <Typography variant="body2">
+              <Typography 
+                variant="body2"
+                sx={{ fontSize: { xs: '0.875rem', sm: '0.875rem' } }}
+              >
                 {text.districtPerformanceDesc}
               </Typography>
             </CardContent>

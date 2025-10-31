@@ -14,8 +14,10 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import { useLanguage } from '../context/LanguageContext';
 
 const ShareButton = ({ districtName, stateName }) => {
+  const { language } = useLanguage();
   const [anchorEl, setAnchorEl] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   
@@ -75,9 +77,14 @@ const ShareButton = ({ districtName, stateName }) => {
 
   return (
     <>
-      <Tooltip title="Share">
-        <IconButton onClick={handleClick} color="primary">
-          <ShareIcon />
+      <Tooltip title={language === 'hindi' ? 'शेयर करें' : 'Share'}>
+        <IconButton
+          color="primary"
+          onClick={handleClick}
+          aria-label="share"
+          size="small"
+        >
+          <ShareIcon fontSize="small" />
         </IconButton>
       </Tooltip>
       

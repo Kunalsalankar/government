@@ -125,8 +125,8 @@ const FloatingTTS = () => {
     <Box
       sx={{
         position: 'fixed',
-        bottom: { xs: 16, md: 24 },
-        right: { xs: 16, md: 24 },
+        bottom: { xs: 80, sm: 20, md: 24 },
+        right: { xs: 16, sm: 20, md: 24 },
         zIndex: 1000,
       }}
     >
@@ -135,8 +135,8 @@ const FloatingTTS = () => {
           color={isSpeaking ? "secondary" : "primary"}
           onClick={readPage}
           sx={{
-            width: { xs: 56, md: 64 },
-            height: { xs: 56, md: 64 },
+            width: { xs: 56, sm: 60, md: 64 },
+            height: { xs: 56, sm: 60, md: 64 },
             boxShadow: 4,
             '&:hover': {
               boxShadow: 8,
@@ -144,9 +144,9 @@ const FloatingTTS = () => {
           }}
         >
           {isSpeaking ? (
-            <VolumeOffIcon sx={{ fontSize: { xs: 28, md: 32 } }} />
+            <VolumeOffIcon sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }} />
           ) : (
-            <VolumeUpIcon sx={{ fontSize: { xs: 28, md: 32 } }} />
+            <VolumeUpIcon sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }} />
           )}
         </Fab>
       </Tooltip>
