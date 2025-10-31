@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Switch, FormControlLabel, IconButton, Tooltip } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useLanguage } from '../context/LanguageContext';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase/config';
 import HelpResources from './HelpResources';
 
 const Header = () => {
   const { language, toggleLanguage } = useLanguage();
+  const navigate = useNavigate();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    setIsLoggedIn(!!role);
+    setUserRole(role);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('userEmail');
+      setIsLoggedIn(false);
+      setUserRole(null);
+      navigate('/');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
   
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ background: 'linear-gradient(90deg, #00897B 0%, #4FC3F7 100%)' }}>
         <Toolbar sx={{ 
           flexDirection: { xs: 'column', sm: 'row' },
           py: { xs: 1, sm: 0.5 },
@@ -75,6 +101,44 @@ const Header = () => {
                 <HelpOutlineIcon fontSize="small" />
               </IconButton>
             </Tooltip>
+
+            {isLoggedIn ? (
+              <>
+                {userRole === 'admin' && (
+                  <Button
+                    component={Link}
+                    to="/admin-dashboard"
+                    color="inherit"
+                    size="small"
+                    sx={{ 
+                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      textTransform: 'none',
+                      display: { xs: 'none', sm: 'inline-flex' }
+                    }}
+                  >
+                    {language === 'hindi' ? 'डैशबोर्ड' : 'Dashboard'}
+                  </Button>
+                )}
+                <IconButton
+                  color="inherit"
+                  onClick={handleLogout}
+                  size="small"
+                  title={language === 'hindi' ? 'लॉगआउट' : 'Logout'}
+                >
+                  <LogoutIcon fontSize="small" />
+                </IconButton>
+              </>
+            ) : (
+              <IconButton
+                component={Link}
+                to="/login"
+                color="inherit"
+                size="small"
+                title={language === 'hindi' ? 'लॉगिन' : 'Login'}
+              >
+                <LoginIcon fontSize="small" />
+              </IconButton>
+            )}
             
             <FormControlLabel
               control={

@@ -4,6 +4,16 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import HomePage from './components/HomePage';
 import DistrictDashboard from './components/DistrictDashboard';
+import JobApplicationForm from './components/JobApplicationForm';
+import TrainingApplicationForm from './components/TrainingApplicationForm';
+import JobOpportunities from './components/JobOpportunities';
+import TrainingPrograms from './components/TrainingPrograms';
+import Login from './components/Login';
+import AdminDashboard from './components/AdminDashboard';
+import AdminAddJob from './components/AdminAddJob';
+import AdminAddTraining from './components/AdminAddTraining';
+import AdminManageJobs from './components/AdminManageJobs';
+import AdminManageTraining from './components/AdminManageTraining';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FloatingTTS from './components/FloatingTTS';
@@ -15,17 +25,27 @@ import './App.css';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#00897B',
+      light: '#4DB6AC',
+      dark: '#00695C',
     },
     secondary: {
-      main: '#f57c00',
+      main: '#7E57C2',
+      light: '#9575CD',
+      dark: '#5E35B1',
+    },
+    success: {
+      main: '#66BB6A',
+    },
+    warning: {
+      main: '#FFA726',
     },
     background: {
-      default: '#f5f5f5',
+      default: '#F1F8F6',
     },
   },
   typography: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: '"Nunito", "Segoe UI", "Roboto", "Arial", sans-serif',
     fontSize: 16,
     h1: {
       fontSize: '2.5rem',
@@ -68,6 +88,16 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/district/:stateName/:districtName" element={<DistrictDashboard />} />
+                <Route path="/job-application" element={<JobApplicationForm />} />
+                <Route path="/training-application" element={<TrainingApplicationForm />} />
+                <Route path="/job-opportunities" element={<JobOpportunities />} />
+                <Route path="/training-programs" element={<TrainingPrograms />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                <Route path="/admin-add-job" element={<AdminAddJob />} />
+                <Route path="/admin-add-training" element={<AdminAddTraining />} />
+                <Route path="/admin-manage-jobs" element={<AdminManageJobs />} />
+                <Route path="/admin-manage-training" element={<AdminManageTraining />} />
               </Routes>
             </main>
             <Footer />
