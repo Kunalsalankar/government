@@ -63,60 +63,153 @@ const HomePage = () => {
     return () => { isMounted = false; };
   }, []);
 
-  // Function to detect user's location
+  // Function to find closest district based on GPS coordinates
+  const findClosestDistrict = (coords) => {
+    // Maharashtra district approximate coordinates (latitude, longitude)
+    const districtCoords = {
+      'Mumbai': { lat: 19.0760, lng: 72.8777 },
+      'Pune': { lat: 18.5204, lng: 73.8567 },
+      'Nagpur': { lat: 21.1458, lng: 79.0882 },
+      'Thane': { lat: 19.2183, lng: 72.9781 },
+      'Nashik': { lat: 19.9975, lng: 73.7898 },
+      'Aurangabad': { lat: 19.8762, lng: 75.3433 },
+      'Solapur': { lat: 17.6599, lng: 75.9064 },
+      'Kolhapur': { lat: 16.7050, lng: 74.2433 },
+      'Amravati': { lat: 20.9374, lng: 77.7796 },
+      'Nanded': { lat: 19.1383, lng: 77.3210 },
+      'Akola': { lat: 20.7002, lng: 77.0082 },
+      'Latur': { lat: 18.3984, lng: 76.5604 },
+      'Ahmednagar': { lat: 19.0948, lng: 74.7480 },
+      'Chandrapur': { lat: 19.9615, lng: 79.2961 },
+      'Parbhani': { lat: 19.2608, lng: 76.7711 },
+      'Jalgaon': { lat: 21.0077, lng: 75.5626 },
+      'Bhiwandi': { lat: 19.3000, lng: 73.0630 },
+      'Panvel': { lat: 18.9894, lng: 73.1102 },
+      'Sangli': { lat: 16.8524, lng: 74.5815 },
+      'Malegaon': { lat: 20.5579, lng: 74.5287 },
+      'Jalna': { lat: 19.8346, lng: 75.8835 },
+      'Wardha': { lat: 20.7453, lng: 78.6022 },
+      'Satara': { lat: 17.6805, lng: 73.9964 },
+      'Raigad': { lat: 18.5204, lng: 73.0200 },
+      'Ratnagiri': { lat: 16.9944, lng: 73.3000 },
+      'Sindhudurg': { lat: 15.9993, lng: 73.7800 },
+      'Yavatmal': { lat: 20.3897, lng: 78.1307 },
+      'Beed': { lat: 18.9889, lng: 75.7585 },
+      'Osmanabad': { lat: 18.1773, lng: 76.0407 },
+      'Bhandara': { lat: 21.1704, lng: 79.6522 },
+      'Buldhana': { lat: 20.5315, lng: 76.1847 },
+      'Gondia': { lat: 21.4561, lng: 80.1914 },
+      'Hingoli': { lat: 19.7147, lng: 77.1400 },
+      'Washim': { lat: 20.1097, lng: 77.1380 },
+      'Gadchiroli': { lat: 20.1809, lng: 80.0094 }
+    };
+
+    let closestDistrict = null;
+    let minDistance = Infinity;
+
+    // Calculate distance to each district
+    for (const [district, distCoords] of Object.entries(districtCoords)) {
+      const distance = Math.sqrt(
+        Math.pow(coords.lat - distCoords.lat, 2) +
+        Math.pow(coords.lng - distCoords.lng, 2)
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestDistrict = district;
+      }
+    }
+
+    // Check if the closest district exists in our districts list
+    const exactMatch = districts.find(d => d.toLowerCase() === closestDistrict.toLowerCase());
+    return exactMatch || closestDistrict;
+  };
+
+  // Function to detect user's location using native GPS
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      alert(text.browserError);
+      alert(language === 'hindi'
+        ? '🚫 आपका ब्राउज़र लोकेशन सेवाओं का समर्थन नहीं करता। कृपया जिला मैन्युअल रूप से चुनें।'
+        : '🚫 Your browser does not support location services. Please select your district manually.');
       return;
     }
 
-    import('../services/geolocationService').then(module => {
-      const geolocationService = module.default;
-      setUserLocation({ loading: true });
-      
-      geolocationService.getCurrentPosition()
-        .then(coordinates => {
-          console.log('GPS Coordinates:', coordinates);
-          setUserLocation(coordinates);
-          const location = geolocationService.findNearestDistrict(coordinates);
-          console.log('Nearest district found:', location);
+    // Show loading state
+    setVoiceError(language === 'hindi'
+      ? '📍 आपकी स्थिति खोज रहे हैं...'
+      : '📍 Detecting your location...');
+
+    // Options for high accuracy GPS
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coordinates = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        
+        console.log('GPS coordinates:', coordinates);
+        console.log('Accuracy:', position.coords.accuracy, 'meters');
+        
+        const matchedDistrict = findClosestDistrict(coordinates);
+        
+        if (matchedDistrict) {
+          setSelectedDistrict(matchedDistrict);
           
-          if (location.district) {
-            // Find matching district (case-insensitive)
-            const matchedDistrict = districts.find(
-              d => d.toUpperCase() === location.district.toUpperCase()
-            );
-            
-            if (matchedDistrict) {
-              setSelectedDistrict(matchedDistrict);
-              const message = `📍 Location Detected:\n\n` +
-                `District: ${matchedDistrict}, Maharashtra\n\n` +
-                `Your GPS Coordinates:\n` +
-                `Latitude: ${coordinates.lat.toFixed(4)}°\n` +
-                `Longitude: ${coordinates.lng.toFixed(4)}°\n\n` +
-                `Note: If this seems incorrect, your browser may be using approximate location (IP-based). ` +
-                `For accurate detection, enable "Precise Location" in browser settings.`;
-              alert(message);
-            } else {
-              alert(text.locationError);
-            }
-          } else {
-            alert(text.locationError);
-          }
-        })
-        .catch(error => {
-          console.error("Error getting location:", error);
-          if (error.code === 1) {
-            alert("Location access denied. Please enable location permissions in your browser settings.");
-          } else {
-            alert(text.locationError);
-          }
-          setUserLocation(null);
-        });
-    }).catch(error => {
-      console.error("Error importing geolocation service:", error);
-      alert(text.locationError);
-    });
+          const accuracyText = position.coords.accuracy < 100 
+            ? (language === 'hindi' ? 'बहुत सटीक' : 'Very Accurate')
+            : position.coords.accuracy < 1000
+            ? (language === 'hindi' ? 'सटीक' : 'Accurate')
+            : (language === 'hindi' ? 'अनुमानित' : 'Approximate');
+          
+          setVoiceError(language === 'hindi'
+            ? `✅ ${matchedDistrict} पहचाना गया (${accuracyText})`
+            : `✅ ${matchedDistrict} detected (${accuracyText})`);
+          
+          setTimeout(() => setVoiceError(''), 5000);
+        } else {
+          setVoiceError(language === 'hindi'
+            ? '⚠️ जिला नहीं मिला। कृपया मैन्युअल रूप से चुनें।'
+            : '⚠️ District not found. Please select manually.');
+          setTimeout(() => setVoiceError(''), 4000);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        
+        let errorMessage = '';
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = language === 'hindi'
+              ? '❌ लोकेशन की अनुमति नहीं।\n\nकृपया ब्राउज़र सेटिंग्स में जाकर लोकेशन की अनुमति दें।'
+              : '❌ Location permission denied.\n\nPlease enable location access in your browser settings and try again.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = language === 'hindi'
+              ? '⚠️ लोकेशन जानकारी उपलब्ध नहीं।\n\nकृपया जिला मैन्युअल रूप से चुनें।'
+              : '⚠️ Location information unavailable.\n\nPlease select your district manually.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = language === 'hindi'
+              ? '⏱️ लोकेशन खोजने में समय लग गया।\n\nकृपया पुनः प्रयास करें या मैन्युअल रूप से चुनें।'
+              : '⏱️ Location detection timed out.\n\nPlease try again or select manually.';
+            break;
+          default:
+            errorMessage = language === 'hindi'
+              ? '❌ लोकेशन खोजने में त्रुटि।\n\nकृपया जिला मैन्युअल रूप से चुनें।'
+              : '❌ Could not detect your location.\n\nPlease select your district manually.';
+        }
+        
+        setVoiceError(errorMessage);
+        setTimeout(() => setVoiceError(''), 6000);
+      },
+      options
+    );
   };
 
   const handleViewData = () => {
