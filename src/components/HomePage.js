@@ -226,8 +226,8 @@ const HomePage = () => {
   const handleViewData = () => {
     if (selectedDistrict) {
       localStorage.setItem('selectedDistrict', selectedDistrict);
-      // Navigate to data view
-      // navigate('/data-view');
+      // Navigate to district dashboard with Maharashtra as state
+      navigate(`/district/Maharashtra/${selectedDistrict}`);
     }
   };
 
