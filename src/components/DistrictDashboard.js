@@ -17,6 +17,8 @@ import mgnregaApi from '../services/mgnregaApi';
 import { useLanguage, translations } from '../context/LanguageContext';
 import DistrictComparison from './DistrictComparison';
 import ShareButton from './ShareButton';
+import ReportCard from './ReportCard';
+import PaymentTracker from './PaymentTracker';
 
 // Add this constant array after the imports and before the PerformanceIndicator component
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -354,6 +356,13 @@ const DistrictDashboard = () => {
         </Grid>
       </Paper>
       
+      {/* Simplified Report Card */}
+      <ReportCard 
+        districtInfo={districtInfo} 
+        districtName={districtName} 
+        stateName={stateName} 
+      />
+      
       <Box sx={{ mb: { xs: 2, sm: 4 } }}>
         <Tabs 
           value={tabValue} 
@@ -593,6 +602,9 @@ const DistrictDashboard = () => {
           />
         </Box>
       )}
+      
+      {/* Payment Tracker */}
+      <PaymentTracker />
       
       <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, mt: { xs: 2, sm: 4 }, bgcolor: '#f5f5f5' }}>
         <Typography 

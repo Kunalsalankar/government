@@ -7,6 +7,7 @@ import DistrictDashboard from './components/DistrictDashboard';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FloatingTTS from './components/FloatingTTS';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { LanguageProvider } from './context/LanguageContext';
 import './App.css';
 
@@ -71,6 +72,7 @@ function App() {
             </main>
             <Footer />
             <FloatingTTS />
+            <PWAInstallPrompt />
           </div>
         </Router>
       </ThemeProvider>
