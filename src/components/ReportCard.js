@@ -71,7 +71,7 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
   const { householdsEmployed, workersRegistered, totalExpenditure, womenParticipation } = districtInfo.currentMonthData;
 
   return (
-    <Paper elevation={4} sx={{ p: { xs: 2, sm: 3 }, mb: { xs: 2, sm: 3 }, bgcolor: '#f8f9fa' }}>
+    <Paper elevation={4} sx={{ p: { xs: 2.1, sm: 3 }, mb: { xs: 2, sm: 3 }, bgcolor: '#f8f9fa' }}>
       {/* Header */}
       <Box sx={{ textAlign: 'center', mb: 3 }}>
         <Typography variant="h5" gutterBottom color="primary" sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' }, fontWeight: 600 }}>
