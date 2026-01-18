@@ -30,11 +30,11 @@ const HomePage = () => {
   // Maharashtra is the only state
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [districts, setDistricts] = useState([]);
-  const [, setUserLocation] = useState(null); // Unused variable prefixed with underscore
   const [isListening, setIsListening] = useState(false);
   const [voiceError, setVoiceError] = useState('');
   const navigate = useNavigate();
   const { language } = useLanguage();
+
   const text = translations.homePage[language];
 
   // Load real Maharashtra districts from CSV data

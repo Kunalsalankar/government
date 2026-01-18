@@ -18,10 +18,12 @@ import WorkIcon from '@mui/icons-material/Work';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import InfoIcon from '@mui/icons-material/Info';
 import PhoneIcon from '@mui/icons-material/Phone';
+import MicIcon from '@mui/icons-material/Mic';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate } from 'react-router-dom';
+import geolocationService from '../services/geolocationService';
 
 const JobOpportunities = () => {
   const theme = useTheme();
@@ -31,6 +33,11 @@ const JobOpportunities = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [voiceError, setVoiceError] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+  const [userDistrict, setUserDistrict] = useState('');
+  const [showNearestOnly, setShowNearestOnly] = useState(false);
 
   const text = {
     english: {
@@ -42,7 +49,19 @@ const JobOpportunities = () => {
       description: 'Description',
       contact: 'Contact Information',
       applyNow: 'Apply Now',
-      totalJobs: 'Total Opportunities'
+      totalJobs: 'Total Opportunities',
+      offlineUsingCache: 'You are offline. Showing saved jobs from this phone.',
+      offlineNoCache: 'You are offline and no saved jobs are available yet. Please open this page once with internet.',
+      speakJobs: 'Speak',
+      listening: 'Listening... Speak now',
+      micNotSupported: 'Your browser does not support voice input',
+      micPermissionDenied: 'Microphone permission denied. Check browser settings.',
+      noSpeech: 'No speech heard. Please try again.',
+      nearestJobsLabel: 'Nearest jobs',
+      districtLabel: 'District',
+      voiceSummaryOne: 'There is 1 job available offline near you.',
+      voiceSummaryMany: 'There are {count} jobs available offline near you.',
+      syncOnReconnect: 'Internet is back. Syncing latest jobs...'
     },
     hindi: {
       title: 'उपलब्ध नौकरी के अवसर',
@@ -53,11 +72,95 @@ const JobOpportunities = () => {
       description: 'विवरण',
       contact: 'संपर्क जानकारी',
       applyNow: 'अभी आवेदन करें',
-      totalJobs: 'कुल अवसर'
+      totalJobs: 'कुल अवसर',
+      offlineUsingCache: 'आप ऑफलाइन हैं। इस फोन में सेव किए गए काम दिखा रहे हैं।',
+      offlineNoCache: 'आप ऑफलाइन हैं और अभी कोई सेव किया हुआ काम उपलब्ध नहीं है। कृपया एक बार इंटरनेट के साथ यह पेज खोलें।',
+      speakJobs: 'बोलें',
+      listening: 'सुन रहा हूँ... बोलिए',
+      micNotSupported: 'आपका ब्राउज़र वॉयस इनपुट का समर्थन नहीं करता',
+      micPermissionDenied: 'माइक्रोफ़ोन की अनुमति नहीं। ब्राउज़र सेटिंग्स जांचें।',
+      noSpeech: 'कोई आवाज़ नहीं सुनी गई। कृपया पुनः प्रयास करें।',
+      nearestJobsLabel: 'नज़दीकी काम',
+      districtLabel: 'जिला',
+      voiceSummaryOne: 'आपके आस-पास 1 काम ऑफलाइन उपलब्ध है।',
+      voiceSummaryMany: 'आपके आस-पास {count} काम ऑफलाइन उपलब्ध हैं।',
+      syncOnReconnect: 'इंटरनेट आ गया है। नए काम सिंक हो रहे हैं...'
     }
   };
 
   const t = text[language] || text.english;
+
+  const getCache = useCallback(() => {
+    try {
+      const raw = localStorage.getItem('cachedJobs_v1');
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.jobs)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const setCache = useCallback((jobsList) => {
+    try {
+      localStorage.setItem('cachedJobs_v1', JSON.stringify({ jobs: jobsList, cachedAt: Date.now() }));
+    } catch {
+      return;
+    }
+  }, []);
+
+  const normalizeText = useCallback((value) => {
+    if (typeof value !== 'string') return '';
+    return value.toLowerCase().replace(/[^a-z0-9\s]/gi, ' ').replace(/\s+/g, ' ').trim();
+  }, []);
+
+  const speak = useCallback((message) => {
+    if (typeof window === 'undefined') return;
+    if (!('speechSynthesis' in window)) return;
+    const msg = (message || '').toString().trim();
+    if (!msg) return;
+
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(msg);
+      utterance.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      return;
+    }
+  }, [language]);
+
+  const resolveDistrict = useCallback(async () => {
+    const saved = localStorage.getItem('selectedDistrict');
+    if (saved && typeof saved === 'string' && saved.trim()) {
+      setUserDistrict(saved.trim());
+      return;
+    }
+
+    try {
+      const coords = await geolocationService.getCurrentPosition();
+      const resolved = geolocationService.findNearestDistrict(coords);
+      if (resolved?.district) {
+        setUserDistrict(resolved.district);
+      }
+    } catch {
+      return;
+    }
+  }, []);
+
+  const getNearestJobs = useCallback((jobsList) => {
+    const district = (userDistrict || '').trim();
+    if (!district) return jobsList;
+
+    const districtNorm = normalizeText(district);
+    const filtered = (Array.isArray(jobsList) ? jobsList : []).filter((job) => {
+      const locationNorm = normalizeText(job?.location || '');
+      return locationNorm.includes(districtNorm);
+    });
+
+    return filtered.length > 0 ? filtered : jobsList;
+  }, [normalizeText, userDistrict]);
 
   const fetchJobs = useCallback(async () => {
     setLoading(true);
@@ -70,17 +173,129 @@ const JobOpportunities = () => {
         jobsList.push({ id: doc.id, ...doc.data() });
       });
       setJobs(jobsList);
+      setCache(jobsList);
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        setError(t.offlineUsingCache);
+      }
     } catch (err) {
       console.error('Error fetching jobs:', err);
-      setError(t.loadError);
+      const cached = getCache();
+      if (cached?.jobs?.length) {
+        setJobs(cached.jobs);
+        setError(t.offlineUsingCache);
+      } else {
+        setError((typeof navigator !== 'undefined' && !navigator.onLine) ? t.offlineNoCache : t.loadError);
+      }
     } finally {
       setLoading(false);
     }
-  }, [t.loadError]);
+  }, [getCache, setCache, t.loadError, t.offlineNoCache, t.offlineUsingCache]);
 
   useEffect(() => {
     fetchJobs();
   }, [fetchJobs]);
+
+  useEffect(() => {
+    resolveDistrict();
+  }, [resolveDistrict]);
+
+  useEffect(() => {
+    const onOnline = () => {
+      setIsOffline(false);
+      setVoiceError('');
+      setError(t.syncOnReconnect);
+      fetchJobs();
+    };
+    const onOffline = () => {
+      setIsOffline(true);
+      setError(t.offlineUsingCache);
+    };
+
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, [fetchJobs, t.offlineUsingCache, t.syncOnReconnect]);
+
+  const announceNearestJobs = useCallback((nearestOnly) => {
+    const baseList = nearestOnly ? getNearestJobs(jobs) : jobs;
+    const count = Array.isArray(baseList) ? baseList.length : 0;
+    if (count === 1) {
+      speak(t.voiceSummaryOne);
+      return;
+    }
+    speak(t.voiceSummaryMany.replace('{count}', String(count)));
+  }, [getNearestJobs, jobs, speak, t.voiceSummaryMany, t.voiceSummaryOne]);
+
+  const handleVoiceInput = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setVoiceError(t.micNotSupported);
+      speak(t.micNotSupported);
+      setTimeout(() => setVoiceError(''), 4000);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = language === 'hindi' ? 'hi-IN' : 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 3;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      setVoiceError(t.listening);
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event?.results?.[0]?.[0]?.transcript || '';
+      const spoken = normalizeText(transcript);
+      const triggers = ['aaj', 'आज', 'kaam', 'काम', 'job', 'jobs', 'naukri', 'नौकरी', 'dikhao', 'दिखाओ', 'show'];
+      const triggered = triggers.some((w) => spoken.includes(normalizeText(String(w))));
+
+      if (triggered) {
+        setShowNearestOnly(true);
+        announceNearestJobs(true);
+      } else {
+        setShowNearestOnly(false);
+        announceNearestJobs(false);
+      }
+
+      setTimeout(() => setVoiceError(''), 2500);
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      if (event?.error === 'no-speech') {
+        setVoiceError(t.noSpeech);
+        speak(t.noSpeech);
+        setTimeout(() => setVoiceError(''), 4000);
+        return;
+      }
+      if (event?.error === 'aborted') {
+        return;
+      }
+
+      if (event?.error === 'not-allowed') {
+        setVoiceError(t.micPermissionDenied);
+        speak(t.micPermissionDenied);
+        setTimeout(() => setVoiceError(''), 5000);
+        return;
+      }
+
+      setVoiceError(t.loadError);
+      setTimeout(() => setVoiceError(''), 4000);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  }, [announceNearestJobs, language, normalizeText, speak, t.listening, t.loadError, t.micNotSupported, t.micPermissionDenied, t.noSpeech]);
 
   return (
     <Box sx={{
@@ -139,6 +354,47 @@ const JobOpportunities = () => {
             </Typography>
           </Box>
 
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, flexWrap: 'wrap', mb: 2 }}>
+            <Button
+              variant={isListening ? 'contained' : 'outlined'}
+              color="primary"
+              startIcon={<MicIcon />}
+              onClick={handleVoiceInput}
+              disabled={loading}
+            >
+              {t.speakJobs}
+            </Button>
+            {isOffline && (
+              <Chip
+                label="Offline"
+                color="warning"
+                sx={{ fontWeight: 700 }}
+              />
+            )}
+            {userDistrict && (
+              <Chip
+                icon={<LocationOnIcon />}
+                label={`${t.districtLabel}: ${userDistrict}`}
+                color="secondary"
+                sx={{ fontWeight: 600 }}
+              />
+            )}
+            {showNearestOnly && (
+              <Chip
+                icon={<WorkIcon />}
+                label={t.nearestJobsLabel}
+                color="success"
+                sx={{ fontWeight: 600 }}
+              />
+            )}
+          </Box>
+
+          {voiceError && (
+            <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }}>
+              {voiceError}
+            </Alert>
+          )}
+
           {/* Stats */}
           <Box sx={{ mb: 3, textAlign: 'center' }}>
             <Chip
@@ -161,14 +417,14 @@ const JobOpportunities = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
               <CircularProgress size={60} />
             </Box>
-          ) : jobs.length === 0 ? (
+          ) : (showNearestOnly ? getNearestJobs(jobs) : jobs).length === 0 ? (
             <Alert severity="info" sx={{ borderRadius: 2 }}>
               {t.noJobs}
             </Alert>
           ) : (
             /* Jobs Grid */
             <Grid container spacing={3}>
-              {jobs.map((job) => (
+              {(showNearestOnly ? getNearestJobs(jobs) : jobs).map((job) => (
                 <Grid item xs={12} md={6} key={job.id}>
                   <Card
                     sx={{

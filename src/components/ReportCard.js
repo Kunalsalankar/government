@@ -17,11 +17,10 @@ import {
   Warning as WarningIcon,
   CheckCircle as CheckIcon
 } from '@mui/icons-material';
-import { useLanguage, translations } from '../context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const ReportCard = ({ districtInfo, districtName, stateName }) => {
   const { language } = useLanguage();
-  const text = translations.dashboard[language];
 
   // Calculate performance grade
   const calculateGrade = (districtData) => {
@@ -58,13 +57,6 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
   };
 
   const performance = calculateGrade(districtInfo);
-
-  // Calculate key metrics status
-  const getMetricStatus = (value, thresholds) => {
-    if (value >= thresholds.good) return { status: 'High', color: '#4caf50', icon: <TrendingUpIcon /> };
-    if (value >= thresholds.average) return { status: 'Medium', color: '#ff9800', icon: <TrendingFlatIcon /> };
-    return { status: 'Low', color: '#f44336', icon: <TrendingDownIcon /> };
-  };
 
   if (!districtInfo) return null;
 
