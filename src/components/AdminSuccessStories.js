@@ -393,7 +393,7 @@ const AdminSuccessStories = () => {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.districtName}
@@ -404,7 +404,7 @@ const AdminSuccessStories = () => {
                 helperText={validationErrors.districtName}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.storyTitle}
@@ -415,7 +415,7 @@ const AdminSuccessStories = () => {
                 helperText={validationErrors.title}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.description}
@@ -428,7 +428,7 @@ const AdminSuccessStories = () => {
                 rows={5}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -477,3 +477,4 @@ const AdminSuccessStories = () => {
 };
 
 export default AdminSuccessStories;
+

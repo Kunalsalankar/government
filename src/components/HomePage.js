@@ -30,11 +30,11 @@ const HomePage = () => {
   // Maharashtra is the only state
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [districts, setDistricts] = useState([]);
+  const [, setUserLocation] = useState(null); // Unused variable prefixed with underscore
   const [isListening, setIsListening] = useState(false);
   const [voiceError, setVoiceError] = useState('');
   const navigate = useNavigate();
   const { language } = useLanguage();
-
   const text = translations.homePage[language];
 
   // Load real Maharashtra districts from CSV data
@@ -737,7 +737,7 @@ const HomePage = () => {
           {language === 'hindi' ? 'मनरेगा में काम करते लोग' : 'MGNREGA Workers in Action'}
         </Typography>
         <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -776,7 +776,7 @@ const HomePage = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -815,7 +815,7 @@ const HomePage = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -854,7 +854,7 @@ const HomePage = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -893,7 +893,7 @@ const HomePage = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -932,7 +932,7 @@ const HomePage = () => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Box
               sx={{
                 overflow: 'hidden',
@@ -1042,7 +1042,7 @@ const HomePage = () => {
       {/* Job Opportunities and Training */}
       <Box sx={{ mb: { xs: 4, sm: 5 } }}>
         <Grid container spacing={{ xs: 2, sm: 3 }} justifyContent="center">
-          <Grid item xs={12} sm={6} md={5}>
+          <Grid size={{ xs: 12, sm: 6, md: 5 }}>
             <Paper
               elevation={4}
               sx={{
@@ -1090,7 +1090,7 @@ const HomePage = () => {
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={5}>
+          <Grid size={{ xs: 12, sm: 6, md: 5 }}>
             <Paper
               elevation={4}
               sx={{
@@ -1138,7 +1138,7 @@ const HomePage = () => {
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={5}>
+          <Grid size={{ xs: 12, sm: 6, md: 5 }}>
             <Paper
               elevation={4}
               sx={{
@@ -1186,7 +1186,7 @@ const HomePage = () => {
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={5}>
+          <Grid size={{ xs: 12, sm: 6, md: 5 }}>
             <Paper
               elevation={4}
               sx={{
@@ -1249,7 +1249,7 @@ const HomePage = () => {
           }}
         >
           {/* Card 1 */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card 
               sx={{ 
                 minHeight: { xs: 180, sm: 200, md: 220 },
@@ -1326,7 +1326,7 @@ const HomePage = () => {
           </Grid>
 
           {/* Card 2 */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Card 
               sx={{ 
                 minHeight: { xs: 180, sm: 200, md: 220 },

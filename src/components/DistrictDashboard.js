@@ -262,7 +262,7 @@ const DistrictDashboard = () => {
         <Divider sx={{ my: 1.5 }} />
         
         <Grid container spacing={{ xs: 1.5, sm: 3 }} sx={{ mt: 0 }}>
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid size={{ xs: 6, sm: 6, md: 3 }}>
             <Card sx={{ height: '100%', bgcolor: '#e3f2fd' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography 
@@ -285,7 +285,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid size={{ xs: 6, sm: 6, md: 3 }}>
             <Card sx={{ height: '100%', bgcolor: '#e8f5e9' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography 
@@ -308,7 +308,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid size={{ xs: 6, sm: 6, md: 3 }}>
             <Card sx={{ height: '100%', bgcolor: '#fff8e1' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography 
@@ -331,7 +331,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={6} md={3}>
+          <Grid size={{ xs: 6, sm: 6, md: 3 }}>
             <Card sx={{ height: '100%', bgcolor: '#ffebee' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography 
@@ -385,36 +385,36 @@ const DistrictDashboard = () => {
         <Box sx={{ p: { xs: 2, sm: 3 }, bgcolor: 'background.paper', borderRadius: 1, mt: 2 }}>
           {tabValue === 0 && (
             <Grid container spacing={3} justifyContent="center">
-              <Grid item xs={12} md={8}>
+              <Grid size={{ xs: 12, md: 8 }}>
                 <Typography variant="h6" gutterBottom align="center">
                   {text.performanceIndicators}
                 </Typography>
                 <Grid container spacing={2}>
-                  <Grid item xs={6} sm={4}>
+                  <Grid size={{ xs: 6, sm: 4 }}>
                     <PerformanceIndicator 
                       label={text.employmentGeneration} 
                       value={districtInfo.performanceIndicators.employmentGeneration} 
                     />
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  <Grid size={{ xs: 6, sm: 4 }}>
                     <PerformanceIndicator 
                       label={text.wagePayment} 
                       value={districtInfo.performanceIndicators.wagePaymentEfficiency} 
                     />
                   </Grid>
-                  <Grid item xs={6} sm={4}>
+                  <Grid size={{ xs: 6, sm: 4 }}>
                     <PerformanceIndicator 
                       label={text.inclusion} 
                       value={districtInfo.performanceIndicators.inclusionOfMarginalized} 
                     />
                   </Grid>
-                  <Grid item xs={6} sm={6}>
+                  <Grid size={{ xs: 6, sm: 6 }}>
                     <PerformanceIndicator 
                       label={text.workCompletion} 
                       value={districtInfo.performanceIndicators.workCompletion} 
                     />
                   </Grid>
-                  <Grid item xs={6} sm={6}>
+                  <Grid size={{ xs: 6, sm: 6 }}>
                     <PerformanceIndicator 
                       label={text.overallPerformance} 
                       value={districtInfo.performanceIndicators.overallPerformance} 
@@ -423,7 +423,7 @@ const DistrictDashboard = () => {
                 </Grid>
               </Grid>
               
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography variant="body1" paragraph align="center">
                   {text.scaleDescription}
                 </Typography>
@@ -510,7 +510,7 @@ const DistrictDashboard = () => {
           {text.additionalInfo}
         </Typography>
         <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -526,7 +526,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -539,7 +539,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -552,7 +552,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -565,7 +565,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -578,7 +578,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={6} sm={4} md={4}>
+          <Grid size={{ xs: 6, sm: 4, md: 4 }}>
             <Card variant="outlined" sx={{ height: '100%', bgcolor: '#fafafa' }}>
               <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
@@ -617,7 +617,7 @@ const DistrictDashboard = () => {
         </Typography>
         
         <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: { xs: 0.5, sm: 1 } }}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ height: '100%', bgcolor: '#e3f2fd', border: '2px solid #2196f3' }}>
               <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
@@ -635,7 +635,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ height: '100%', bgcolor: '#e8f5e9', border: '2px solid #4caf50' }}>
               <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
@@ -653,7 +653,7 @@ const DistrictDashboard = () => {
             </Card>
           </Grid>
           
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Card sx={{ height: '100%', bgcolor: '#fff8e1', border: '2px solid #ffc107' }}>
               <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>

@@ -92,6 +92,21 @@ const Header = () => {
             alignItems: 'center',
             gap: 1
           }}>
+            <Button
+              component={Link}
+              to="/skill-matching"
+              color="inherit"
+              size="small"
+              sx={{ 
+                fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                textTransform: 'none',
+                display: { xs: 'none', sm: 'inline-flex' }
+              }}
+              title={language === 'hindi' ? 'कौशल मिलान' : 'Skill Matching'}
+            >
+              💼 {language === 'hindi' ? 'कौशल' : 'Skills'}
+            </Button>
+
             <Tooltip title={language === 'hindi' ? 'सहायता' : 'Help'}>
               <IconButton 
                 color="inherit" 

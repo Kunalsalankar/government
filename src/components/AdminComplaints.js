@@ -299,7 +299,7 @@ const AdminComplaints = () => {
           {/* Filters */}
           <Box sx={{ mb: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>{t.filterDistrict}</InputLabel>
                   <Select
@@ -314,7 +314,7 @@ const AdminComplaints = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>{t.filterIssueType}</InputLabel>
                   <Select
@@ -330,7 +330,7 @@ const AdminComplaints = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} sm={4}>
+              <Grid size={{ xs: 12, sm: 4 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>{t.filterStatus}</InputLabel>
                   <Select
@@ -478,3 +478,4 @@ const AdminComplaints = () => {
 };
 
 export default AdminComplaints;
+

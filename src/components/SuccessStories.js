@@ -190,7 +190,7 @@ const SuccessStories = () => {
           {/* Search and Filter */}
           <Box sx={{ mb: 4 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <TextField
                   fullWidth
                   placeholder={t.search}
@@ -211,7 +211,7 @@ const SuccessStories = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <FormControl fullWidth>
                   <InputLabel>{t.filterByDistrict}</InputLabel>
                   <Select
@@ -335,3 +335,4 @@ const SuccessStories = () => {
 };
 
 export default SuccessStories;
+

@@ -21,8 +21,11 @@ import ComplaintForm from './components/ComplaintForm';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import FloatingTTS from './components/FloatingTTS';
+import FloatingChatbot from './components/FloatingChatbot';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import SkillMatchingDashboard from './components/SkillMatchingDashboard';
 import { LanguageProvider } from './context/LanguageContext';
+import { SkillProvider } from './context/SkillContext';
 import './App.css';
 
 // Create a theme with accessible colors and larger text
@@ -83,37 +86,41 @@ const theme = createTheme({
 function App() {
   return (
     <LanguageProvider>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Router>
-          <div className="App">
-            <Header />
-            <main className="main-content">
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/district/:stateName/:districtName" element={<DistrictDashboard />} />
-                <Route path="/job-application" element={<JobApplicationForm />} />
-                <Route path="/training-application" element={<TrainingApplicationForm />} />
-                <Route path="/job-opportunities" element={<JobOpportunities />} />
-                <Route path="/training-programs" element={<TrainingPrograms />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin-dashboard" element={<AdminDashboard />} />
-                <Route path="/admin-add-job" element={<AdminAddJob />} />
-                <Route path="/admin-add-training" element={<AdminAddTraining />} />
-                <Route path="/admin-manage-jobs" element={<AdminManageJobs />} />
-                <Route path="/admin-manage-training" element={<AdminManageTraining />} />
-                <Route path="/admin-success-stories" element={<AdminSuccessStories />} />
-                <Route path="/admin-complaints" element={<AdminComplaints />} />
-                <Route path="/success-stories" element={<SuccessStories />} />
-                <Route path="/complaint-form" element={<ComplaintForm />} />
-              </Routes>
-            </main>
-            <Footer />
-            <FloatingTTS />
-            <PWAInstallPrompt />
-          </div>
-        </Router>
-      </ThemeProvider>
+      <SkillProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Router>
+            <div className="App">
+              <Header />
+              <main className="main-content">
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/district/:stateName/:districtName" element={<DistrictDashboard />} />
+                  <Route path="/job-application" element={<JobApplicationForm />} />
+                  <Route path="/training-application" element={<TrainingApplicationForm />} />
+                  <Route path="/job-opportunities" element={<JobOpportunities />} />
+                  <Route path="/training-programs" element={<TrainingPrograms />} />
+                  <Route path="/skill-matching" element={<SkillMatchingDashboard />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin-add-job" element={<AdminAddJob />} />
+                  <Route path="/admin-add-training" element={<AdminAddTraining />} />
+                  <Route path="/admin-manage-jobs" element={<AdminManageJobs />} />
+                  <Route path="/admin-manage-training" element={<AdminManageTraining />} />
+                  <Route path="/admin-success-stories" element={<AdminSuccessStories />} />
+                  <Route path="/admin-complaints" element={<AdminComplaints />} />
+                  <Route path="/success-stories" element={<SuccessStories />} />
+                  <Route path="/complaint-form" element={<ComplaintForm />} />
+                </Routes>
+              </main>
+              <Footer />
+              <FloatingTTS />
+              <FloatingChatbot />
+              <PWAInstallPrompt />
+            </div>
+          </Router>
+        </ThemeProvider>
+      </SkillProvider>
     </LanguageProvider>
   );
 }

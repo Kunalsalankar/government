@@ -146,3 +146,4 @@ const ShareButton = ({ districtName, stateName }) => {
 };
 
 export default ShareButton;
+

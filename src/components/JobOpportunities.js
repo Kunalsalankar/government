@@ -59,6 +59,7 @@ const JobOpportunities = () => {
       noSpeech: 'No speech heard. Please try again.',
       nearestJobsLabel: 'Nearest jobs',
       districtLabel: 'District',
+      voiceHint: 'Try: “Show today’s work”',
       voiceSummaryOne: 'There is 1 job available offline near you.',
       voiceSummaryMany: 'There are {count} jobs available offline near you.',
       syncOnReconnect: 'Internet is back. Syncing latest jobs...'
@@ -82,6 +83,7 @@ const JobOpportunities = () => {
       noSpeech: 'कोई आवाज़ नहीं सुनी गई। कृपया पुनः प्रयास करें।',
       nearestJobsLabel: 'नज़दीकी काम',
       districtLabel: 'जिला',
+      voiceHint: 'कहें: “आज का काम दिखाओ”',
       voiceSummaryOne: 'आपके आस-पास 1 काम ऑफलाइन उपलब्ध है।',
       voiceSummaryMany: 'आपके आस-पास {count} काम ऑफलाइन उपलब्ध हैं।',
       syncOnReconnect: 'इंटरनेट आ गया है। नए काम सिंक हो रहे हैं...'
@@ -527,3 +529,4 @@ const JobOpportunities = () => {
 };
 
 export default JobOpportunities;
+

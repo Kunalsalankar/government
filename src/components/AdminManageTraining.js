@@ -330,7 +330,7 @@ const AdminManageTraining = () => {
         <DialogTitle>{t.editTitle}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.programName}
@@ -341,7 +341,7 @@ const AdminManageTraining = () => {
                 helperText={validationErrors.programName}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.location}
@@ -352,7 +352,7 @@ const AdminManageTraining = () => {
                 helperText={validationErrors.location}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label={t.description}
@@ -365,7 +365,7 @@ const AdminManageTraining = () => {
                 rows={4}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t.startTime}
@@ -378,7 +378,7 @@ const AdminManageTraining = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label={t.endTime}
@@ -418,3 +418,4 @@ const AdminManageTraining = () => {
 };
 
 export default AdminManageTraining;
+

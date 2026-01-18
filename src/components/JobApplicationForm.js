@@ -281,7 +281,7 @@ const JobApplicationForm = () => {
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               {/* Personal Information Section */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography
                   variant="h6"
                   sx={{
@@ -298,7 +298,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Full Name */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.fullName}
@@ -319,7 +319,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Age */}
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.age}
@@ -342,7 +342,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Gender */}
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth error={!!validationErrors.gender}>
                   <InputLabel>{t.gender}</InputLabel>
                   <Select
@@ -369,7 +369,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Contact Details Section */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography
                   variant="h6"
                   sx={{
@@ -386,7 +386,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Mobile Number */}
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.mobile}
@@ -408,7 +408,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Village / District */}
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.village}
@@ -429,7 +429,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Work Preferences Section */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Typography
                   variant="h6"
                   sx={{
@@ -446,7 +446,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Type of Work */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.workType}
@@ -467,7 +467,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Skills / Experience */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.skills}
@@ -490,7 +490,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Availability */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth error={!!validationErrors.availability}>
                   <InputLabel>{t.availability}</InputLabel>
                   <Select
@@ -517,7 +517,7 @@ const JobApplicationForm = () => {
               </Grid>
 
               {/* Submit Button */}
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -553,3 +553,4 @@ const JobApplicationForm = () => {
 };
 
 export default JobApplicationForm;
+

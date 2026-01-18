@@ -221,7 +221,7 @@ const AdminAddTraining = () => {
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.programName}
@@ -241,7 +241,7 @@ const AdminAddTraining = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.location}
@@ -261,7 +261,7 @@ const AdminAddTraining = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.description}
@@ -283,7 +283,7 @@ const AdminAddTraining = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.startTime}
@@ -304,7 +304,7 @@ const AdminAddTraining = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.endTime}
@@ -325,7 +325,7 @@ const AdminAddTraining = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -353,7 +353,7 @@ const AdminAddTraining = () => {
                 </Button>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   variant="outlined"
                   fullWidth
@@ -377,3 +377,4 @@ const AdminAddTraining = () => {
 };
 
 export default AdminAddTraining;
+

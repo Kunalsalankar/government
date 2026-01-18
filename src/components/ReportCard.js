@@ -17,10 +17,11 @@ import {
   Warning as WarningIcon,
   CheckCircle as CheckIcon
 } from '@mui/icons-material';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, translations } from '../context/LanguageContext';
 
 const ReportCard = ({ districtInfo, districtName, stateName }) => {
   const { language } = useLanguage();
+  const text = translations.dashboard[language];
 
   // Calculate performance grade
   const calculateGrade = (districtData) => {
@@ -57,6 +58,13 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
   };
 
   const performance = calculateGrade(districtInfo);
+
+  // Calculate key metrics status
+  const getMetricStatus = (value, thresholds) => {
+    if (value >= thresholds.good) return { status: 'High', color: '#4caf50', icon: <TrendingUpIcon /> };
+    if (value >= thresholds.average) return { status: 'Medium', color: '#ff9800', icon: <TrendingFlatIcon /> };
+    return { status: 'Low', color: '#f44336', icon: <TrendingDownIcon /> };
+  };
 
   if (!districtInfo) return null;
 
@@ -115,7 +123,7 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
 
       {/* Quick Stats */}
       <Grid container spacing={{ xs: 1.5, sm: 2 }}>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3 }}>
           <Card variant="outlined">
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
               <TrophyIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#ffc107', mb: 1 }} />
@@ -129,7 +137,7 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3 }}>
           <Card variant="outlined">
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
               <CheckIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#4caf50', mb: 1 }} />
@@ -143,7 +151,7 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3 }}>
           <Card variant="outlined">
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
               <WarningIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#ff9800', mb: 1 }} />
@@ -157,7 +165,7 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
           </Card>
         </Grid>
 
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3 }}>
           <Card variant="outlined">
             <CardContent sx={{ p: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
               <Typography variant="h4" sx={{ fontSize: { xs: '1.25rem', sm: '1.75rem' }, fontWeight: 600, color: 'primary.main', mb: 1 }}>
@@ -213,3 +221,4 @@ const ReportCard = ({ districtInfo, districtName, stateName }) => {
 };
 
 export default ReportCard;
+

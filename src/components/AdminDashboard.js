@@ -303,7 +303,7 @@ const AdminDashboard = () => {
           {/* Action Buttons */}
           <Box sx={{ mb: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6} md={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -324,7 +324,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -345,7 +345,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -366,7 +366,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={3}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -387,7 +387,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
 
-              <Grid item xs={12} sm={6} md={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -408,7 +408,7 @@ const AdminDashboard = () => {
                 </Button>
               </Grid>
               
-              <Grid item xs={12} sm={6} md={2}>
+              <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                 <Button
                   variant="contained"
                   fullWidth
@@ -582,3 +582,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

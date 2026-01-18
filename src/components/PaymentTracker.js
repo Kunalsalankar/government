@@ -20,14 +20,16 @@ import {
   AccountBalanceWallet as WalletIcon,
   CheckCircle as CheckIcon,
   HourglassEmpty as PendingIcon,
+  Error as ErrorIcon,
   Search as SearchIcon,
   CalendarToday as CalendarIcon,
   TrendingUp as TrendingIcon
 } from '@mui/icons-material';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage, translations } from '../context/LanguageContext';
 
 const PaymentTracker = () => {
   const { language } = useLanguage();
+  const text = translations.dashboard[language];
   
   const [jobCardNumber, setJobCardNumber] = useState('');
   const [loading, setLoading] = useState(false);
@@ -154,7 +156,7 @@ const PaymentTracker = () => {
           <Card sx={{ mb: 3, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
             <CardContent>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                     {language === 'hindi' ? 'कार्डधारक' : 'Card Holder'}
                   </Typography>
@@ -162,7 +164,7 @@ const PaymentTracker = () => {
                     {paymentData.holderName}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.8)', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                     {language === 'hindi' ? 'जॉब कार्ड नंबर' : 'Job Card Number'}
                   </Typography>
@@ -176,7 +178,7 @@ const PaymentTracker = () => {
 
           {/* Summary Cards */}
           <Grid container spacing={{ xs: 1.5, sm: 2 }} sx={{ mb: 3 }}>
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Card variant="outlined">
                 <CardContent sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 } }}>
                   <CalendarIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#2196f3', mb: 1 }} />
@@ -190,7 +192,7 @@ const PaymentTracker = () => {
               </Card>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Card variant="outlined">
                 <CardContent sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 } }}>
                   <TrendingIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#4caf50', mb: 1 }} />
@@ -204,7 +206,7 @@ const PaymentTracker = () => {
               </Card>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Card variant="outlined">
                 <CardContent sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 } }}>
                   <CheckIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#4caf50', mb: 1 }} />
@@ -218,7 +220,7 @@ const PaymentTracker = () => {
               </Card>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Card variant="outlined">
                 <CardContent sx={{ textAlign: 'center', p: { xs: 1.5, sm: 2 } }}>
                   <PendingIcon sx={{ fontSize: { xs: 30, sm: 40 }, color: '#ff9800', mb: 1 }} />
@@ -315,3 +317,4 @@ const PaymentTracker = () => {
 };
 
 export default PaymentTracker;
+

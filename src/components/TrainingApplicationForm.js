@@ -278,7 +278,7 @@ const TrainingApplicationForm = () => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.fullName}
@@ -298,7 +298,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={4}>
+                  <Grid size={{ xs: 12, sm: 4 }}>
                     <TextField
                       fullWidth
                       label={t.age}
@@ -320,7 +320,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={8}>
+                  <Grid size={{ xs: 12, sm: 8 }}>
                     <FormControl 
                       fullWidth 
                       error={!!validationErrors.gender}
@@ -369,7 +369,7 @@ const TrainingApplicationForm = () => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.mobile}
@@ -390,7 +390,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.village}
@@ -424,7 +424,7 @@ const TrainingApplicationForm = () => {
                 </Typography>
 
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.education}
@@ -444,7 +444,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.preferredSkill}
@@ -464,7 +464,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <TextField
                       fullWidth
                       label={t.experience}
@@ -484,7 +484,7 @@ const TrainingApplicationForm = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <FormControl 
                       fullWidth 
                       error={!!validationErrors.availability}
@@ -551,3 +551,4 @@ const TrainingApplicationForm = () => {
 };
 
 export default TrainingApplicationForm;
+

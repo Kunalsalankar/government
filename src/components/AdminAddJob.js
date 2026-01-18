@@ -229,7 +229,7 @@ const AdminAddJob = () => {
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.jobTitle}
@@ -249,7 +249,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.location}
@@ -269,7 +269,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.description}
@@ -291,7 +291,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.startTime}
@@ -312,7 +312,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
                   label={t.endTime}
@@ -333,7 +333,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <TextField
                   fullWidth
                   label={t.contactInfo}
@@ -353,7 +353,7 @@ const AdminAddJob = () => {
                 />
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -381,7 +381,7 @@ const AdminAddJob = () => {
                 </Button>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   variant="outlined"
                   fullWidth
@@ -405,3 +405,4 @@ const AdminAddJob = () => {
 };
 
 export default AdminAddJob;
+
