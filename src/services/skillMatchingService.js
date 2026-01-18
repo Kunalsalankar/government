@@ -1,5 +1,3 @@
-import { generateGeminiReply } from './geminiService';
-
 // Common labor/MGNREGA job categories
 const LABOR_JOBS = [
   { id: 1, title: 'Construction Worker', skillsRequired: ['physical labor', 'construction', 'brick laying', 'concrete work'], salary: '8000-12000' },

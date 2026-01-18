@@ -12,7 +12,6 @@ import {
 } from '@mui/material';
 import SkillAssessment from './SkillAssessment';
 import JobRecommendations from './JobRecommendations';
-import { getJobRecommendations } from '../services/skillMatchingService';
 import { useSkillContext } from '../context/SkillContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -30,8 +29,6 @@ const SkillMatchingDashboard = () => {
     userProfile,
     jobRecommendations,
     assessmentResult,
-    updateUserProfile,
-    updateRecommendations,
     updateAssessmentResult,
     clearAssessment,
   } = useSkillContext();
@@ -42,14 +39,7 @@ const SkillMatchingDashboard = () => {
 
   const handleAssessmentComplete = (assessment) => {
     updateAssessmentResult(assessment);
-    
-    // Parse assessment and update recommendations
-    try {
-      const parsed = typeof assessment === 'string' ? JSON.parse(assessment) : assessment;
-      setActiveTab(1); // Switch to results tab
-    } catch (error) {
-      console.error('Error parsing assessment:', error);
-    }
+    setActiveTab(1); // Switch to results tab
   };
 
   return (

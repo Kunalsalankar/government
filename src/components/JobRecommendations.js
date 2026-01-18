@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Container,
-  Paper,
   Card,
   CardContent,
   Typography,
@@ -28,7 +27,6 @@ import { useLanguage } from '../context/LanguageContext';
 const JobRecommendations = ({ jobs, userSkills, userExperience }) => {
   const { language = 'en' } = useLanguage();
   const currentLanguage = language === 'hindi' ? 'hindi' : 'en';
-  const [expandedJob, setExpandedJob] = useState(null);
   const [selectedJobPath, setSelectedJobPath] = useState(null);
   const [applyDialogOpen, setApplyDialogOpen] = useState(false);
   const [selectedJobForApply, setSelectedJobForApply] = useState(null);

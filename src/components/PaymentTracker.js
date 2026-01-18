@@ -20,16 +20,14 @@ import {
   AccountBalanceWallet as WalletIcon,
   CheckCircle as CheckIcon,
   HourglassEmpty as PendingIcon,
-  Error as ErrorIcon,
   Search as SearchIcon,
   CalendarToday as CalendarIcon,
   TrendingUp as TrendingIcon
 } from '@mui/icons-material';
-import { useLanguage, translations } from '../context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const PaymentTracker = () => {
   const { language } = useLanguage();
-  const text = translations.dashboard[language];
   
   const [jobCardNumber, setJobCardNumber] = useState('');
   const [loading, setLoading] = useState(false);
