@@ -1,6 +1,8 @@
 // Firebase configuration
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { enableIndexedDbPersistence, getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = { 
   apiKey: "AIzaSyBxB6n1WQab6pYdZ5VeyeHarh9N_R0bEhg", 
@@ -17,5 +19,14 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
+enableIndexedDbPersistence(db).catch((err) => {
+  console.warn('Firestore persistence unavailable:', err);
+});
 
-export { db };
+// Initialize Auth
+const auth = getAuth(app);
+
+// Initialize Storage
+const storage = getStorage(app);
+
+export { db, auth, storage };

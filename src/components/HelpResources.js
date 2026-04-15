@@ -17,11 +17,10 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PhoneIcon from '@mui/icons-material/Phone';
-import EmailIcon from '@mui/icons-material/Email';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import GavelIcon from '@mui/icons-material/Gavel';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { useLanguage, translations } from '../context/LanguageContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const HelpResources = ({ open, onClose }) => {
   const { language } = useLanguage();
@@ -164,3 +163,4 @@ const HelpResources = ({ open, onClose }) => {
 };
 
 export default HelpResources;
+

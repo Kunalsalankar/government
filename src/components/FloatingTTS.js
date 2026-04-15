@@ -52,7 +52,8 @@ const FloatingTTS = () => {
         return text;
       })
       .filter(text => text.length > 0)
-      .join('. ');
+      .join('. ')
+      .substring(0, 3000); // Limit to 3000 characters to avoid browser errors
 
     if (!textContent) {
       alert(language === 'hindi' ? 'पढ़ने के लिए कोई सामग्री नहीं है' : 'No content to read');
@@ -98,10 +99,11 @@ const FloatingTTS = () => {
       setIsSpeaking(false);
     };
     utterance.onerror = (e) => {
-      console.error('Speech error:', e);
-      alert(language === 'hindi' 
-        ? 'आवाज़ चलाने में समस्या है। कृपया पुनः प्रयास करें।' 
-        : 'Error playing audio. Please try again.');
+      console.warn('Speech synthesis error:', e.error);
+      // Only show alert for critical errors, not for common issues like 'canceled'
+      if (e.error !== 'canceled' && e.error !== 'interrupted') {
+        console.error('TTS Error details:', e);
+      }
       setIsSpeaking(false);
     };
 
@@ -125,8 +127,8 @@ const FloatingTTS = () => {
     <Box
       sx={{
         position: 'fixed',
-        bottom: { xs: 16, md: 24 },
-        right: { xs: 16, md: 24 },
+        bottom: { xs: 80, sm: 20, md: 24 },
+        right: { xs: 16, sm: 20, md: 24 },
         zIndex: 1000,
       }}
     >
@@ -135,8 +137,8 @@ const FloatingTTS = () => {
           color={isSpeaking ? "secondary" : "primary"}
           onClick={readPage}
           sx={{
-            width: { xs: 56, md: 64 },
-            height: { xs: 56, md: 64 },
+            width: { xs: 56, sm: 60, md: 64 },
+            height: { xs: 56, sm: 60, md: 64 },
             boxShadow: 4,
             '&:hover': {
               boxShadow: 8,
@@ -144,9 +146,9 @@ const FloatingTTS = () => {
           }}
         >
           {isSpeaking ? (
-            <VolumeOffIcon sx={{ fontSize: { xs: 28, md: 32 } }} />
+            <VolumeOffIcon sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }} />
           ) : (
-            <VolumeUpIcon sx={{ fontSize: { xs: 28, md: 32 } }} />
+            <VolumeUpIcon sx={{ fontSize: { xs: 24, sm: 28, md: 32 } }} />
           )}
         </Fab>
       </Tooltip>
@@ -155,3 +157,4 @@ const FloatingTTS = () => {
 };
 
 export default FloatingTTS;
+
