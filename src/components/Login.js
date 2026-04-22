@@ -16,6 +16,7 @@ import {
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import GavelIcon from '@mui/icons-material/Gavel';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +27,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   
-  const [tabValue, setTabValue] = useState(0); // 0 = User, 1 = Admin
+  const [tabValue, setTabValue] = useState(0); // 0 = User, 1 = Admin, 2 = Head Officer
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -39,6 +40,7 @@ const Login = () => {
       title: 'Login to MGNREGA Portal',
       userTab: 'User Login',
       adminTab: 'Admin Login',
+      headOfficerTab: 'Head Officer Login',
       email: 'Email Address',
       emailPlaceholder: 'Enter your email',
       password: 'Password',
@@ -47,12 +49,14 @@ const Login = () => {
       loggingIn: 'Logging in...',
       invalidCredentials: 'Invalid email or password',
       userNote: 'Note: Users can apply for jobs without login. Login is optional.',
-      adminNote: 'Admin access only. Please use your admin credentials.'
+      adminNote: 'Admin access only. Please use your admin credentials.',
+      headOfficerNote: 'Head Officer access only. Please use your Head Officer credentials.'
     },
     hindi: {
       title: 'मनरेगा पोर्टल में लॉगिन करें',
       userTab: 'उपयोगकर्ता लॉगिन',
       adminTab: 'प्रशासक लॉगिन',
+      headOfficerTab: 'मुख्य अधिकारी लॉगिन',
       email: 'ईमेल पता',
       emailPlaceholder: 'अपना ईमेल दर्ज करें',
       password: 'पासवर्ड',
@@ -61,7 +65,8 @@ const Login = () => {
       loggingIn: 'लॉगिन हो रहा है...',
       invalidCredentials: 'अमान्य ईमेल या पासवर्ड',
       userNote: 'नोट: उपयोगकर्ता बिना लॉगिन के नौकरी के लिए आवेदन कर सकते हैं। लॉगिन वैकल्पिक है।',
-      adminNote: 'केवल प्रशासक एक्सेस। कृपया अपना प्रशासक क्रेडेंशियल उपयोग करें।'
+      adminNote: 'केवल प्रशासक एक्सेस। कृपया अपना प्रशासक क्रेडेंशियल उपयोग करें।',
+      headOfficerNote: 'केवल मुख्य अधिकारी एक्सेस। कृपया अपना मुख्य अधिकारी क्रेडेंशियल उपयोग करें।'
     }
   };
 
@@ -94,12 +99,15 @@ const Login = () => {
 
       // Store user role in localStorage
       const isAdmin = tabValue === 1;
-      localStorage.setItem('userRole', isAdmin ? 'admin' : 'user');
+      const isHeadOfficer = tabValue === 2;
+      localStorage.setItem('userRole', isAdmin ? 'admin' : isHeadOfficer ? 'headOfficer' : 'user');
       localStorage.setItem('userEmail', userCredential.user.email);
 
       // Redirect based on role
       if (isAdmin) {
         navigate('/admin-dashboard');
+      } else if (isHeadOfficer) {
+        navigate('/head-officer-dashboard');
       } else {
         navigate('/');
       }
@@ -175,6 +183,7 @@ const Login = () => {
           >
             <Tab icon={<PersonIcon />} label={t.userTab} />
             <Tab icon={<AdminPanelSettingsIcon />} label={t.adminTab} />
+            <Tab icon={<GavelIcon />} label={t.headOfficerTab} />
           </Tabs>
 
           {/* Info Note */}
@@ -182,7 +191,7 @@ const Login = () => {
             severity="info" 
             sx={{ mb: 3, borderRadius: 2 }}
           >
-            {tabValue === 0 ? t.userNote : t.adminNote}
+            {tabValue === 0 ? t.userNote : tabValue === 1 ? t.adminNote : t.headOfficerNote}
           </Alert>
 
           {/* Error Message */}
@@ -266,6 +275,9 @@ const Login = () => {
             </Typography>
             <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
               <strong>{language === 'hindi' ? 'प्रशासक:' : 'Admin:'}</strong> rohit@gmail.com / admin123
+            </Typography>
+            <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+              <strong>{language === 'hindi' ? 'मुख्य अधिकारी:' : 'Head Officer:'}</strong> headofficer@gmail.com / head1234
             </Typography>
             <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
               <strong>{language === 'hindi' ? 'उपयोगकर्ता:' : 'User:'}</strong> kunal@gmail.com / pass1234

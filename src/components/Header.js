@@ -134,6 +134,21 @@ const Header = () => {
                     {language === 'hindi' ? 'डैशबोर्ड' : 'Dashboard'}
                   </Button>
                 )}
+                {userRole === 'headOfficer' && (
+                  <Button
+                    component={Link}
+                    to="/head-officer-dashboard"
+                    color="inherit"
+                    size="small"
+                    sx={{ 
+                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      textTransform: 'none',
+                      display: { xs: 'none', sm: 'inline-flex' }
+                    }}
+                  >
+                    {language === 'hindi' ? 'पैनल' : 'Panel'}
+                  </Button>
+                )}
                 <IconButton
                   color="inherit"
                   onClick={handleLogout}

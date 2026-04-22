@@ -31,6 +31,7 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import NorthEastIcon from '@mui/icons-material/NorthEast';
 import { collection, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useLanguage } from '../context/LanguageContext';
@@ -66,9 +67,11 @@ const AdminComplaints = () => {
       actions: 'Actions',
       view: 'View Details',
       updateStatus: 'Update Status',
+      escalate: 'Escalate to Head Officer',
       pending: 'Pending',
       inReview: 'In Review',
       resolved: 'Resolved',
+      escalated: 'Escalated',
       rejected: 'Rejected',
       paymentDelay: 'Payment Delay',
       workNotProvided: 'Work Not Provided',
@@ -101,9 +104,11 @@ const AdminComplaints = () => {
       actions: 'कार्रवाई',
       view: 'विवरण देखें',
       updateStatus: 'स्थिति अपडेट करें',
+      escalate: 'मुख्य अधिकारी को भेजें',
       pending: 'लंबित',
       inReview: 'समीक्षाधीन',
       resolved: 'हल हो गया',
+      escalated: 'एस्केलेट',
       rejected: 'अस्वीकृत',
       paymentDelay: 'भुगतान में देरी',
       workNotProvided: 'काम नहीं मिला',
@@ -140,6 +145,7 @@ const AdminComplaints = () => {
       'Pending': t.pending,
       'In Review': t.inReview,
       'Resolved': t.resolved,
+      'Escalated': t.escalated,
       'Rejected': t.rejected
     };
     return statuses[status] || status;
@@ -153,6 +159,8 @@ const AdminComplaints = () => {
         return 'info';
       case 'Resolved':
         return 'success';
+      case 'Escalated':
+        return 'warning';
       case 'Rejected':
         return 'error';
       default:
@@ -229,13 +237,29 @@ const AdminComplaints = () => {
   const handleStatusUpdate = async (complaintId, newStatus) => {
     try {
       await updateDoc(doc(db, 'complaints', complaintId), {
-        status: newStatus
+        status: newStatus,
+        resolvedBy: newStatus === 'Resolved' ? 'Admin' : null
       });
       fetchComplaints();
       alert(t.updateSuccess);
     } catch (err) {
       console.error('Error updating status:', err);
       alert('Failed to update status');
+    }
+  };
+
+  const handleEscalate = async (complaint) => {
+    try {
+      await updateDoc(doc(db, 'complaints', complaint.id), {
+        status: 'Escalated',
+        escalatedTo: 'Head Officer',
+        resolvedBy: null
+      });
+      fetchComplaints();
+      alert(t.updateSuccess);
+    } catch (err) {
+      console.error('Error escalating complaint:', err);
+      alert('Failed to escalate complaint');
     }
   };
 
@@ -399,6 +423,7 @@ const AdminComplaints = () => {
                             <MenuItem value="Pending">{t.pending}</MenuItem>
                             <MenuItem value="In Review">{t.inReview}</MenuItem>
                             <MenuItem value="Resolved">{t.resolved}</MenuItem>
+                            <MenuItem value="Escalated">{t.escalated}</MenuItem>
                             <MenuItem value="Rejected">{t.rejected}</MenuItem>
                           </Select>
                         </FormControl>
@@ -417,6 +442,18 @@ const AdminComplaints = () => {
                             <VisibilityIcon />
                           </IconButton>
                         </Tooltip>
+
+                        {(complaint.status === 'Pending' || complaint.status === 'In Review') && (
+                          <Tooltip title={t.escalate}>
+                            <IconButton
+                              size="small"
+                              color="warning"
+                              onClick={() => handleEscalate(complaint)}
+                            >
+                              <NorthEastIcon />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -16,6 +16,7 @@ import AdminManageJobs from './components/AdminManageJobs';
 import AdminManageTraining from './components/AdminManageTraining';
 import AdminSuccessStories from './components/AdminSuccessStories';
 import AdminComplaints from './components/AdminComplaints';
+import HeadOfficerDashboard from './components/HeadOfficerDashboard';
 import SuccessStories from './components/SuccessStories';
 import ComplaintForm from './components/ComplaintForm';
 import Header from './components/Header';
@@ -109,6 +110,7 @@ function App() {
                   <Route path="/admin-manage-training" element={<AdminManageTraining />} />
                   <Route path="/admin-success-stories" element={<AdminSuccessStories />} />
                   <Route path="/admin-complaints" element={<AdminComplaints />} />
+                  <Route path="/head-officer-dashboard" element={<HeadOfficerDashboard />} />
                   <Route path="/success-stories" element={<SuccessStories />} />
                   <Route path="/complaint-form" element={<ComplaintForm />} />
                 </Routes>
